@@ -7,6 +7,8 @@ var bodyParser = require('body-parser')
 // Routing part
 var CourseSchema = require('../schemas/Courses').schema
 var StudentSchema = require('../schemas/Students').schema
+var Student = require('../schemas/Students')
+var Course = require('../schemas/Courses')
 
 router.use(bodyParser.json())
 
@@ -40,9 +42,67 @@ router.get('/', function (req, res) {
 })
 
 router.post('/', function(req,res){
-    Project.create(req.body, function(err, project){
-        res.send(project)
+    if (req.body.id){
+        Student.find({id: req.body.id}, "-_id", function(err, student){
+            if (err){
+                console.log(err)
+            }
+            else if (student.length == 0){
+                res.send('Student was not FOUND !')
+            }
+            else{
+                Project.create({
+
+                        // create here
+
+
+
+                }, function(err, project){
+                    res.send(project)
+                })
+            }
+        })
+    }
+})
+
+router.delete('/:id', function(req, res){
+    Project.deleteOne({id: req.params.id}, function(err, result){
+        res.send(result)
     })
 })
+
+
+router.put('/', function(req, res){
+    Project.findOneAndUpdate({id: req.body.id},{ name: req.body.name}, function(err, result){
+        res.send(result)
+    })
+ })
+ 
+
+/* router.get('/search/:keyword',function(req,res){
+    Student.find({
+                    name: {$regex: req.params.keyword, $options: 'i'},
+                    id: {$}
+
+                }, function(err, result){
+                    res.send(result)
+    })
+}) */
+
+router.get('/search', function (req, res) {
+    Project.find(
+        { name: { $regex: req.query.name} },
+        function (err, projects) {
+            if(err) handleError(err)
+            res.send(projects)
+        }).sort({name: 1})
+ })
+ 
+
+function handleError(err){
+    console.log(err)
+ }
+ 
+
 
 module.exports = router
