@@ -7,11 +7,10 @@ var bodyParser = require('body-parser')
 router.use(bodyParser.json())
 
 mongoose.connect("mongodb://localhost:27017/mydb", { useNewUrlParser: true, useUnifiedTopology: true });
-var StudentSchema = new mongoose.Schema({
-    id: String,
-    name: String
-})
-var Student = mongoose.model('students', StudentSchema)
+var Student = require('../schemas/Students')
+var StudentSchema = require('../schemas/Students').schema
+
+
 
 
 router.get('/about', function(req,res){
@@ -36,12 +35,13 @@ router.delete('/:id', function(req, res){
     })
 })
 
+
 router.put('/', function(req, res){
-    Student.findOneAndUpdate({id: req.body.id},{name: req.body.name}),
-    function(err, result){
+    Student.findOneAndUpdate({id: req.body.id},{ name: req.body.name}, function(err, result){
         res.send(result)
-    }
-})  
+    })
+ })
+ 
 
 /* router.get('/search/:keyword',function(req,res){
     Student.find({
@@ -55,18 +55,11 @@ router.put('/', function(req, res){
 
 router.get('/search', function (req, res) {
     Student.find(
-        { name: { $regex: req.query.name } },
-        {
-            skip:0, // Starting Row
-            limit:10, // Ending Row
-            sort:{
-                name: -1 //Sort by Date Added DESC
-            }
-        },
+        { name: { $regex: req.query.name} },
         function (err, students) {
             if(err) handleError(err)
             res.send(students)
-        })
+        }).sort({name: 1})
  })
  
 
@@ -75,5 +68,6 @@ function handleError(err){
  }
  
 
-module.exports = router
+module.exports = router;
+
 
