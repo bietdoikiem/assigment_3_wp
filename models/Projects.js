@@ -41,9 +41,31 @@ router.get('/', function (req, res) {
     })
 })
 
+router.get('/:id', function (req, res) {
+    Project.findOne({id: req.params.id}, function (err, project) {
+        if(project){
+        res.send(project)
+        }
+        else{
+            res.send("Not found")
+        }
+    })
+})
+
+router.get('/byCourse/:id', function(req,res){
+    Project.find({'course.id': req.params.id.toUpperCase()}, function(err, projects){
+        if(projects.length > 0){
+            res.send(projects)
+        }
+        else{
+            res.send("Not found")
+        }
+    })
+})
+
 router.post('/', function(req,res){
     if (req.body.id){
-        Student.find({id: req.body.id}, "-_id", function(err, student){
+        Student.find({id: req.body.student.id}, "-_id", function(err, student){
             if (err){
                 console.log(err)
             }
@@ -52,11 +74,24 @@ router.post('/', function(req,res){
             }
             else{
                 Project.create({
-
-                        // create here
-
-
-
+                    id: req.body.id,
+                    name: req.body.name,
+                    student: {
+                        _id: req.body._id,
+                        id: student[0].id,
+                        name: student[0].name
+                    },
+                    course: {
+                        id: req.body.course.id,
+                        name: req.body.course.name
+                    },
+                    assigment: req.body.assigment,
+                    technology: req.body.assigment,
+                    scope: req.body.scope,
+                    description: req.body.description,
+                    industry: req.body.industry,
+                    application: req.body.application,
+                    Photo: req.body.Photo
                 }, function(err, project){
                     res.send(project)
                 })
@@ -89,9 +124,9 @@ router.put('/', function(req, res){
     })
 }) */
 
-router.get('/search', function (req, res) {
+router.get('/all/filter', function (req, res) {
     Project.find(
-        { name: { $regex: req.query.name} },
+        { name: { $regex: req.query.name, $options :'i'} },
         function (err, projects) {
             if(err) handleError(err)
             res.send(projects)
@@ -102,7 +137,7 @@ router.get('/search', function (req, res) {
 function handleError(err){
     console.log(err)
  }
- 
+
 
 
 module.exports = router

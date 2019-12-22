@@ -23,10 +23,23 @@ router.get('/',function(req,res){
     })
 })
 
+router.get('/:id',function(req,res){
+    Student.findOne({id: req.params.id}, function(err, student){
+        if (student){
+        res.send(student)
+        }
+        else{
+            res.send("Not found")
+        }
+    })
+})
+
 router.post('/', function(req,res){
+    if(req.body.id){
     Student.create(req.body, function(err, student){
         res.send(student)
     })
+}
 })
 
 router.delete('/:id', function(req, res){
@@ -53,9 +66,9 @@ router.put('/', function(req, res){
     })
 }) */
 
-router.get('/search', function (req, res) {
+router.get('/all/filter', function (req, res) {
     Student.find(
-        { name: { $regex: req.query.name} },
+        { name: { $regex: req.query.name,  $options :'i'} },
         function (err, students) {
             if(err) handleError(err)
             res.send(students)

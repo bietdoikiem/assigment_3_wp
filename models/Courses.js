@@ -21,20 +21,36 @@ router.get('/',function(req,res){
     })
 })
 
-router.post('/', function(req,res){
-    Course.create(req.body, function(err, course){
+router.get('/:id',function(req,res){
+    Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
+        if (course) {
         res.send(course)
+        }
+        else {
+            res.send("Not found")
+        }
     })
 })
 
+router.post('/', function(req,res){
+    if(req.body.id){
+    Course.create({
+        id: req.body.id.toUpperCase(),
+        name: req.body.name
+    }, function(err, course){
+        res.send(course)
+    })
+    }
+})
+
 router.delete('/:id', function(req, res){
-    Course.deleteOne({id: req.params.id}, function(err, result){
+    Course.deleteOne({id: req.params.id.toUpperCase()}, function(err, result){
         res.send(result)
     })
 })
 
 router.put('/', function(req, res){
-    Course.findOneAndUpdate({id: req.body.id},{ name: req.body.name}, function(err, result){
+    Course.findOneAndUpdate({id: req.body.id.toUpperCase()},{ name: req.body.name}, function(err, result){
         res.send(result)
     })
  }) 
@@ -49,9 +65,9 @@ router.put('/', function(req, res){
     })
 }) */
 
-router.get('/search', function (req, res) {
+router.get('/all/filter', function (req, res) {
     Course.find(
-        { name: { $regex: req.query.name} },
+        { name: { $regex: req.query.name, $options :'i'} },
         function (err, courses) {
             if(err) handleError(err)
             res.send(courses)
