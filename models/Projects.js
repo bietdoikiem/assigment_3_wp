@@ -98,6 +98,43 @@ router.post('/', function(req,res){
             }
         })
     }
+    else{
+        Student.find({id: req.body.student.id}, "-_id", function(err, student){
+            if (err){
+                console.log(err)
+            }
+            else if (student.length == 0){
+                res.send('Student was not FOUND !')
+            }
+            else{
+                Project.find({}, "-_id", function(err, projects){
+                Project.create({
+                    id: handleID(projects),
+                    name: req.body.name,
+                    student: {
+                        _id: req.body._id,
+                        id: student[0].id,
+                        name: student[0].name
+                    },
+                    course: {
+                        id: req.body.course.id,
+                        name: req.body.course.name
+                    },
+                    assigment: req.body.assigment,
+                    technology: req.body.assigment,
+                    scope: req.body.scope,
+                    description: req.body.description,
+                    industry: req.body.industry,
+                    application: req.body.application,
+                    Photo: req.body.Photo
+                }, function(err, project){
+                    res.send(project)
+                })
+            })
+            }
+        })
+
+    }
 })
 
 router.delete('/:id', function(req, res){
@@ -136,7 +173,15 @@ router.get('/all/filter', function (req, res) {
 
 function handleError(err){
     console.log(err)
- }
+}
+function handleID(res){
+    var length = res.length
+    var last_item = res[length-1].id
+    last_item = parseInt(last_item, 10)
+    last_item += 1;
+    last_item = last_item.toString(10);
+    return last_item
+}
 
 
 
