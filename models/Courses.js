@@ -49,8 +49,8 @@ router.delete('/:id', function(req, res){
     })
 })
 
-router.put('/', function(req, res){
-    Course.findOneAndUpdate({id: req.body.id.toUpperCase()},{ name: req.body.name}, function(err, result){
+router.put('/:id', function(req, res){
+    Course.findOneAndUpdate({id: req.params.id.toUpperCase()},req.body, function(err, result){
         res.send(result)
     })
  }) 

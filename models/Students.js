@@ -49,8 +49,8 @@ router.delete('/:id', function(req, res){
 })
 
 
-router.put('/', function(req, res){
-    Student.findOneAndUpdate({id: req.body.id},{ name: req.body.name}, function(err, result){
+router.put('/:id', function(req, res){
+    Student.findOneAndUpdate({id: req.params.id},req.body, function(err, result){
         res.send(result)
     })
  })

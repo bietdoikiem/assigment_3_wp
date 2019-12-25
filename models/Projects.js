@@ -90,7 +90,8 @@ router.post('/', function(req,res){
                     student: {
                         _id: req.body._id,
                         id: student[0].id,
-                        name: student[0].name
+                        name: student[0].name,
+                        year: student[0].year
                     },
                     course: {
                         id: req.body.course.id,
@@ -125,7 +126,8 @@ router.post('/', function(req,res){
                     student: {
                         _id: req.body._id,
                         id: student[0].id,
-                        name: student[0].name
+                        name: student[0].name,
+                        year: student[0].year
                     },
                     course: {
                         id: req.body.course.id,
@@ -155,11 +157,40 @@ router.delete('/:id', function(req, res){
 })
 
 
-router.put('/', function(req, res){
-    Project.findOneAndUpdate({id: req.body.id},{ name: req.body.name}, function(err, result){
+router.put('/:id', function(req, res){
+    Student.find({id: req.body.student.id}, "-_id", function(err, student){
+        if (err){
+            console.log(err)
+        }
+        else if (student.length == 0){
+            res.send('Student was not FOUND !')
+        }
+        else{
+    Project.findOneAndUpdate({id: req.params.id},{
+        name: req.body.name,
+        student: {
+            _id: req.body._id,
+            id: student[0].id,
+            name: student[0].name,
+            year: student[0].year
+        },
+        course: {
+            id: req.body.course.id,
+            name: req.body.course.name
+        },
+        assigment: req.body.assigment,
+        technology: req.body.assigment,
+        scope: req.body.scope,
+        description: req.body.description,
+        industry: req.body.industry,
+        application: req.body.application,
+        Photo: req.body.Photo
+    }, function(err, result){
         res.send(result)
     })
+    }
  })
+})
  
 
 /* router.get('/search/:keyword',function(req,res){

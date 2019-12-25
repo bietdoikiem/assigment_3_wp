@@ -4,7 +4,8 @@ mongoose.connect("mongodb://localhost:27017/mydb", { useNewUrlParser: true, useU
 
 var StudentSchema = new mongoose.Schema({
     id: String,
-    name: String
+    name: String,
+    year: String
 })
 
 module.exports = mongoose.model('students', StudentSchema);
