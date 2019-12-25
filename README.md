@@ -24,6 +24,7 @@ GET: /courses/all/filter?name=[course_name] : Search for courses by name. <br/>
 ### PROJECTS
 GET: /projects : get all projects. <br/> 
 GET: /projects/id : get project by id. <br/> 
+GET: /projects/byCourse/id : get project by course id. <br/> 
 POST: /projects : post a project (require a proper student ID)<br/>
 DELETE: /projects/id : delete a project by id. <br/>
 PUT: /projects : Update a project. <br/> 
