@@ -4,29 +4,30 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Back-end: http://localhost:5000
 How-to-use Back-end URLS:
-**STUDENTS**
-GET: /students : get all students.
-GET: /students/id : get student by id.
-POST: /students : post a student. ( requires a proper id )
-DELETE: /students/id : delete a student by id.
-PUT: /students : Update a student.
-GET: /students/all/filter?name=[student_name] : Search for students by name.
 
-**COURSES**
-GET: /courses : get all courses.
-GET: /courses/id : get course by id.
-POST: /courses : post a course ( requires a proper id )
-DELETE: /courses/id : delete a course by id.
-PUT: /courses : Update a course.
-GET: /courses/all/filter?name=[course_name] : Search for courses by name.
+### STUDENTS
+GET: /students : get all students. <br/>
+GET: /students/id : get student by id. <br/>
+POST: /students : post a student. ( requires a proper id ) <br/>
+DELETE: /students/id : delete a student by id. <br/>
+PUT: /students : Update a student. <br/>
+GET: /students/all/filter?name=[student_name] : Search for students by name. <br/>
 
-**PROJECTS**
-GET: /projects : get all projects.
-GET: /projects/id : get project by id.
-POST: /projects : post a project (require a proper student ID)
-DELETE: /projects/id : delete a project by id.
-PUT: /projects : Update a project.
-GET: /projects/all/filter?name=[project_name] : Search for projects by name.
+### COURSES
+GET: /courses : get all courses. <br/>
+GET: /courses/id : get course by id. <br/>
+POST: /courses : post a course ( requires a proper id ) <br/>
+DELETE: /courses/id : delete a course by id. <br/>
+PUT: /courses : Update a course. <br/> 
+GET: /courses/all/filter?name=[course_name] : Search for courses by name. <br/>
+
+### PROJECTS
+GET: /projects : get all projects. <br/> 
+GET: /projects/id : get project by id. <br/> 
+POST: /projects : post a project (require a proper student ID)<br/>
+DELETE: /projects/id : delete a project by id. <br/>
+PUT: /projects : Update a project. <br/> 
+GET: /projects/all/filter?name=[project_name] : Search for projects by name.<br/>
 
 Front-end: http://localhost:3000
 
