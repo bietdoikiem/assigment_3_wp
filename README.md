@@ -3,6 +3,31 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Available Scripts
 
 Back-end: http://localhost:5000
+How-to-use Back-end URLS:
+**STUDENTS**
+GET: /students : get all students.
+GET: /students/id : get student by id.
+POST: /students : post a student. ( requires a proper id )
+DELETE: /students/id : delete a student by id.
+PUT: /students : Update a student.
+GET: /students/all/filter?name=[student_name] : Search for students by name.
+
+**COURSES**
+GET: /courses : get all courses.
+GET: /courses/id : get course by id.
+POST: /courses : post a course ( requires a proper id )
+DELETE: /courses/id : delete a course by id.
+PUT: /courses : Update a course.
+GET: /courses/all/filter?name=[course_name] : Search for courses by name.
+
+**PROJECTS**
+GET: /projects : get all projects.
+GET: /projects/id : get project by id.
+POST: /projects : post a project (require a proper student ID)
+DELETE: /projects/id : delete a project by id.
+PUT: /projects : Update a project.
+GET: /projects/all/filter?name=[project_name] : Search for projects by name.
+
 Front-end: http://localhost:3000
 
 In the project directory, you can run:
