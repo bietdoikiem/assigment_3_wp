@@ -63,6 +63,17 @@ router.get('/byCourse/:id', function(req,res){
     })
 })
 
+router.get('/byStudent/:id', function(req,res){
+    Project.find({'student.id': req.params.id.toLowerCase()}, function(err, projects){
+        if(projects.length > 0){
+            res.send(projects)
+        }
+        else{
+            res.send("Not found")
+        }
+    })
+})
+
 router.post('/', function(req,res){
     if (req.body.id){
         Student.find({id: req.body.student.id}, "-_id", function(err, student){
