@@ -91,6 +91,10 @@ router.delete('/:id', function(req, res){
 
 router.put('/:id', upload.single('Course_Photo') , function(req, res){
     if(req.file){
+    Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
+        if(err) handleError(err)
+        fs.unlinkSync('./'+course.Course_Photo)
+    } )
     var path = "/" + req.file.path.split("\\").join("/")
     console.log(req.file);
     sharp(req.file.path).resize(262, 146).toFile('./uploads/courses/' + '262x146-' + req.file.filename , function(err) {

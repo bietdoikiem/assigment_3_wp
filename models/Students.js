@@ -94,6 +94,10 @@ router.delete('/:id', function(req, res){
 
 router.put('/:id', upload.single('Student_Photo') , function(req, res){
     if(req.file){
+        Student.findOne({id: req.params.id}, function(err, student){
+            if(err) handleError(err)
+            fs.unlinkSync('./'+student.Student_Photo)
+        } )
     var path = "/" + req.file.path.split("\\").join("/")
     console.log(req.file);
     sharp(req.file.path).resize(256, 256).toFile('./uploads/students/' + '256x256-' + req.file.filename , function(err) {
