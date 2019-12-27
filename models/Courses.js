@@ -1,6 +1,34 @@
 var express = require('express')
 var router = express.Router()
 
+var multer = require('multer');
+
+var storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        cb(null, './uploads/courses/')
+    },
+    filename: function(req, file, cb){
+        var fileFormat = (file.originalname).split(".");
+        cb(null, file.fieldname + '-' + Date.now() + '.' + fileFormat[fileFormat.length - 1])
+    }
+})
+
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+        cb(null, true);
+    }else{
+        cb(null, false);
+    }
+}
+
+var upload = multer({
+    storage: storage, limits:{
+    fileSize: 1024 * 1024 * 16
+    },
+    fileFilter: fileFilter
+});
+
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser')
 
@@ -32,11 +60,14 @@ router.get('/:id',function(req,res){
     })
 })
 
-router.post('/', function(req,res){
+router.post('/', upload.single('Course_Photo') , function(req,res){
     if(req.body.id){
+    console.log(req.file);
+    var path = "/" + req.file.path.split("\\").join("/")
     Course.create({
         id: req.body.id.toUpperCase(),
-        name: req.body.name
+        name: req.body.name,
+        Course_Photo: path
     }, function(err, course){
         res.send(course)
     })
@@ -59,7 +90,6 @@ router.put('/:id', function(req, res){
     Course.find({
                     name: {$regex: req.params.keyword, $options: 'i'},
                     id: {$}
-
                 }, function(err, result){
                     res.send(result)
     })
@@ -81,5 +111,3 @@ function handleError(err){
 
 
 module.exports = router;
-
-
