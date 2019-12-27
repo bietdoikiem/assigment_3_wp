@@ -1,5 +1,6 @@
 var express = require('express')
 var router = express.Router()
+var sharp = require('sharp')
 
 var multer = require('multer');
 
@@ -64,6 +65,12 @@ router.post('/', upload.single('Course_Photo') , function(req,res){
     if(req.body.id){
     console.log(req.file);
     var path = "/" + req.file.path.split("\\").join("/")
+    sharp(req.file.path).resize(262, 317).toFile('./uploads/'+ req.file.filename, function(err) {
+        if (err) {
+            console.error('sharp>>>', err)
+        }
+        console.log('Resize successfully')
+        });
     Course.create({
         id: req.body.id.toUpperCase(),
         name: req.body.name,
