@@ -8,7 +8,7 @@ How-to-use Back-end URLS:
 ### STUDENTS
 GET: /students : get all students. <br/>
 GET: /students/id : get student by id. <br/>
-POST: /students : post a student. ( requires a proper id )  (File stored in route /uploads/projects/[filename]) <br/>
+POST: /students : post a student. ( requires a proper id )  (File stored in route /uploads/students/[filename]) <br/>
 DELETE: /students/id : delete a student by id. <br/>
 PUT: /students/id : Update a student. <br/>
 GET: /students/all/filter?name=[student_name] : Search for students by name. <br/>
