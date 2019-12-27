@@ -63,19 +63,20 @@ router.get('/:id',function(req,res){
 
 router.post('/', upload.single('Course_Photo') , function(req,res){
     if(req.body.id){
-    console.log(req.file);
     var path = "/" + req.file.path.split("\\").join("/")
-    sharp(req.file.path).resize(262, 317).toFile('./uploads/courses', '262x317'+ req.file.filename, function(err) {
+    console.log(req.file);
+    sharp(req.file.path).resize(262, 146).toFile('./uploads/courses/' + '262x146-' + req.file.filename , function(err) {
         if (err) {
             console.error('sharp>>>', err)
         }
         console.log('Resize successfully')
-        fs.unlinkSync('.' + path)
+        fs.unlinkSync('.'+path)
         });
+        console.log(path)
     Course.create({
         id: req.body.id.toUpperCase(),
         name: req.body.name,
-        Course_Photo: path
+        Course_Photo: path.replace(req.file.filename, '262x146-' + req.file.filename)
     }, function(err, course){
         res.send(course)
     })
@@ -88,10 +89,35 @@ router.delete('/:id', function(req, res){
     })
 })
 
-router.put('/:id', function(req, res){
-    Course.findOneAndUpdate({id: req.params.id.toUpperCase()},req.body, function(err, result){
+router.put('/:id', upload.single('Course_Photo') , function(req, res){
+    if(req.file){
+    var path = "/" + req.file.path.split("\\").join("/")
+    console.log(req.file);
+    sharp(req.file.path).resize(262, 146).toFile('./uploads/courses/' + '262x146-' + req.file.filename , function(err) {
+        if (err) {
+            console.error('sharp>>>', err)
+        }
+        console.log('Resize successfully')
+        fs.unlinkSync('.'+path)
+        });
+        console.log(path)
+    Course.findOneAndUpdate({id: req.params.id.toUpperCase()},{
+        name: req.body.name,
+        Course_Photo: path.replace(req.file.filename, '262x146-' + req.file.filename)
+    }, 
+        function(err, result){
         res.send(result)
     })
+    }
+    else{
+        Course.findOneAndUpdate({id: req.params.id.toUpperCase()},{
+            name: req.body.name
+        }, 
+            function(err, result){
+            res.send(result)
+        })
+
+    }
  }) 
 
 /* router.get('/search/:keyword',function(req,res){

@@ -11,7 +11,8 @@ var projects = require('./models/Projects')
 
 app.use(bodyParser.json())
 app.use('/uploads/projects/', express.static('uploads/projects'))
-app.use('/uploads/courses', express.static('uploads/courses'))
+app.use('/uploads/courses/', express.static('uploads/courses'))
+app.use('/uploads/students/', express.static('uploads/students'))
 app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/mydb', { useNewUrlParser: true, useUnifiedTopology: true });
