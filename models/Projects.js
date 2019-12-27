@@ -104,9 +104,9 @@ router.get('/byStudent/:id', function(req,res){
     })
 })
 
-router.post('/', upload.single('Photo'), function(req,res){
+router.post('/', upload.array('Photo'), function(req,res){
     console.log(req.file);
-    var path = "/" + req.file.path.split("\\").join("/")
+    var paths = req.files.map(file => "/" + file.path.split("\\").join("/"))
     if (req.body.id){
         Student.find({id: req.body.student.id}, "-_id", function(err, student){
             if (err){
@@ -135,7 +135,7 @@ router.post('/', upload.single('Photo'), function(req,res){
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
-                    Photo: path
+                    Photo: paths
                 }, function(err, project){
                     res.send(project)
                 })
@@ -171,7 +171,7 @@ router.post('/', upload.single('Photo'), function(req,res){
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
-                    Photo: path
+                    Photo: paths
                 }, function(err, project){
                     res.send(project)
                 })
