@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var sharp = require('sharp')
-
+var fs = require('fs')
 var multer = require('multer');
 
 var storage = multer.diskStorage({
@@ -65,11 +65,12 @@ router.post('/', upload.single('Course_Photo') , function(req,res){
     if(req.body.id){
     console.log(req.file);
     var path = "/" + req.file.path.split("\\").join("/")
-    sharp(req.file.path).resize(262, 317).toFile('./uploads/'+ req.file.filename, function(err) {
+    sharp(req.file.path).resize(262, 317).toFile('./uploads/courses', '262x317'+ req.file.filename, function(err) {
         if (err) {
             console.error('sharp>>>', err)
         }
         console.log('Resize successfully')
+        fs.unlinkSync('.' + path)
         });
     Course.create({
         id: req.body.id.toUpperCase(),
