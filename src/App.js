@@ -4,6 +4,7 @@ import Footer from './Footer.jsx'
 import Home from './Home.jsx';
 import Projects from './Projects.jsx'
 import './style.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom'
 
 

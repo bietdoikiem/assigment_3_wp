@@ -26,10 +26,10 @@ export default class Navbar extends React.Component {
                         </li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item ">
+                        <li class="nav-item active ">
                             <Link class="nav-link " to="/about">Sign in</Link>
                         </li>
-                        <li class="nav-item ">
+                        <li class="nav-item active">
                             <Link class="nav-link " to="/about">Sign up</Link>
                         </li>
                     </ul>
