@@ -8,4 +8,6 @@ var StudentSchema = new mongoose.Schema({
     year: String
 })
 
+
+
 module.exports = mongoose.model('students', StudentSchema);

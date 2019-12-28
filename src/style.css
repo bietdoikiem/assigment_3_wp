@@ -70,3 +70,12 @@ footer {
     -o-background-size: cover;
     background-size: cover;
   }
+  .card{
+    width: 100%;
+    min-height: 20rem;
+}
+  .divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+}
