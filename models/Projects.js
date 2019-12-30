@@ -55,7 +55,7 @@ const ProjectSchema =new mongoose.Schema({
     description: String,
     industry: String,
     application: String,
-    Photo: {type: String, required: true}
+    Photo: {type: Array, default: [], required: true}
 });
 
 var Project = mongoose.model('projects', ProjectSchema)
@@ -105,8 +105,10 @@ router.get('/byStudent/:id', function(req,res){
 })
 
 router.post('/', upload.array('Photo'), function(req,res){
-    console.log(req.file);
-    var paths = req.files.map(file => "/" + file.path.split("\\").join("/"))
+    console.log(req.files);
+    var paths = req.files.map(file => {path = "/" + file.path.split("\\").join("/");
+                                        return path})
+    console.log(paths)
     if (req.body.id){
         Student.find({id: req.body.student.id}, "-_id", function(err, student){
             if (err){

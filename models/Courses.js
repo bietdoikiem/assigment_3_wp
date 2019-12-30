@@ -93,7 +93,7 @@ router.put('/:id', upload.single('Course_Photo') , function(req, res){
     if(req.file){
     Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
         if(err) handleError(err)
-        fs.unlinkSync('./'+course.Course_Photo)
+        fs.unlinkSync('.'+course.Course_Photo)
     } )
     var path = "/" + req.file.path.split("\\").join("/")
     console.log(req.file);
@@ -102,7 +102,7 @@ router.put('/:id', upload.single('Course_Photo') , function(req, res){
             console.error('sharp>>>', err)
         }
         console.log('Resize successfully')
-        fs.unlinkSync('.'+path)
+        fs.unlinkSync('./'+path)
         });
         console.log(path)
     Course.findOneAndUpdate({id: req.params.id.toUpperCase()},{

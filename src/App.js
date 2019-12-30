@@ -6,6 +6,7 @@ import Projects from './Projects.jsx'
 import Courses from './Courses.jsx'
 import AddCourses from './Add_courses'
 import './style.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom'
 
 
