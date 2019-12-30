@@ -2,6 +2,8 @@
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
+var fs = require('fs')
+var sharp = require('sharp')
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -49,13 +51,14 @@ const ProjectSchema =new mongoose.Schema({
     name: String,
     student: StudentSchema,
     course: CourseSchema,
+    semester: String,
     assignment: String,
     technology: String,
     scope: String,
     description: String,
     industry: String,
     application: String,
-    Photo: {type: Array, default: [], required: true}
+    Photo: {type: Array, default: [], required: true, default: "./uploads/projects/Photo-1577492549772.png"}
 });
 
 var Project = mongoose.model('projects', ProjectSchema)
@@ -106,9 +109,11 @@ router.get('/byStudent/:id', function(req,res){
 
 router.post('/', upload.array('Photo'), function(req,res){
     console.log(req.files);
+    if (req.files){
     var paths = req.files.map(file => {path = "/" + file.path.split("\\").join("/");
                                         return path})
     console.log(paths)
+    }
     if (req.body.id){
         Student.find({id: req.body.student.id}, "-_id", function(err, student){
             if (err){
@@ -118,6 +123,7 @@ router.post('/', upload.array('Photo'), function(req,res){
                 res.send('Student was not FOUND !')
             }
             else{
+                Course.find({id: req.body.course.id.toUpperCase()}, function(err, course){
                 Project.create({
                     id: req.body.id,
                     name: req.body.name,
@@ -128,19 +134,22 @@ router.post('/', upload.array('Photo'), function(req,res){
                         year: student[0].year
                     },
                     course: {
-                        id: req.body.course.id,
-                        name: req.body.course.name
+                        id: course[0].id,
+                        name: course[0].name
                     },
+                    semester: req.body.semester,
                     assignment: req.body.assignment,
-                    technology: req.body.assignment,
+                    technology: req.body.technology,
                     scope: req.body.scope,
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
                     Photo: paths
                 }, function(err, project){
+                    if(err) handleError(err)
                     res.send(project)
                 })
+            })
             }
         })
     }
@@ -153,6 +162,7 @@ router.post('/', upload.array('Photo'), function(req,res){
                 res.send('Student was not FOUND !')
             }
             else{
+                Course.find({id: req.body.course.id.toUpperCase()}, function(err, course){
                 Project.find({}, "-_id", function(err, projects){
                 Project.create({
                     id: handleID(projects),
@@ -164,18 +174,21 @@ router.post('/', upload.array('Photo'), function(req,res){
                         year: student[0].year
                     },
                     course: {
-                        id: req.body.course.id,
-                        name: req.body.course.name
+                        id: course[0].id,
+                        name: course[0].name
                     },
+                    semester: req.body.semester,
                     assignment: req.body.assignment,
-                    technology: req.body.assignment,
+                    technology: req.body.technology,
                     scope: req.body.scope,
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
                     Photo: paths
                 }, function(err, project){
+                    if(err) handleError(err)
                     res.send(project)
+                })
                 })
             })
             }
@@ -192,7 +205,23 @@ router.delete('/:id', function(req, res){
 })
 
 
-router.put('/:id', function(req, res){
+router.put('/:id', upload.array('Photo'), function(req, res){
+    console.log(req.files);
+    if(req.file){
+        Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
+            if(err) handleError(err)
+            fs.unlinkSync('.'+course.Course_Photo)
+        } )
+        var path = "/" + req.file.path.split("\\").join("/")
+        console.log(req.file);
+        sharp(req.file.path).resize(262, 146).toFile('./uploads/courses/' + '262x146-' + req.file.filename , function(err) {
+            if (err) {
+                console.error('sharp>>>', err)
+            }
+            console.log('Resize successfully')
+            fs.unlinkSync('./'+path)
+            });
+            console.log(path)
     Student.find({id: req.body.student.id}, "-_id", function(err, student){
         if (err){
             console.log(err)
@@ -225,6 +254,7 @@ router.put('/:id', function(req, res){
     })
     }
  })
+    }
 })
  
 
@@ -253,11 +283,16 @@ function handleError(err){
 }
 function handleID(res){
     var length = res.length
+    if (length == 0 ){
+        return "1"
+    }
+    else{
     var last_item = res[length-1].id
     last_item = parseInt(last_item, 10)
     last_item += 1;
     last_item = last_item.toString(10);
     return last_item
+    }
 }
 
 
