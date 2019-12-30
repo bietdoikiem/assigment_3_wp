@@ -26,7 +26,7 @@ const fileFilter = (req, file, cb) => {
 
 var upload = multer({
     storage: storage, limits:{
-    fileSize: 1024 * 1024 * 16
+    fileSize: 1024 * 1024 * 100
     },
     fileFilter: fileFilter
 });
@@ -46,18 +46,25 @@ router.use(bodyParser.json())
 
 mongoose.connect("mongodb://localhost:27017/mydb", { useNewUrlParser: true, useUnifiedTopology: true });
 
+const AssignmentSchema =new mongoose.Schema({
+    name: String,
+    description: String,
+    percentage: String
+})
+
 const ProjectSchema =new mongoose.Schema({
     id: String,
     name: String,
     student: StudentSchema,
     course: CourseSchema,
     semester: String,
-    assignment: String,
+    assignment: AssignmentSchema,
     technology: String,
     scope: String,
     description: String,
     industry: String,
     application: String,
+    thumbnail: String,
     Photo: {type: Array, default: [], required: true, default: "./uploads/projects/Photo-1577492549772.png"}
 });
 
@@ -115,7 +122,7 @@ router.post('/', upload.array('Photo'), function(req,res){
     console.log(paths)
     }
     if (req.body.id){
-        Student.find({id: req.body.student.id}, "-_id", function(err, student){
+        Student.find({id: req.body.studentId}, "-_id", function(err, student){
             if (err){
                 console.log(err)
             }
@@ -123,7 +130,7 @@ router.post('/', upload.array('Photo'), function(req,res){
                 res.send('Student was not FOUND !')
             }
             else{
-                Course.find({id: req.body.course.id.toUpperCase()}, function(err, course){
+                Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
                 Project.create({
                     id: req.body.id,
                     name: req.body.name,
@@ -138,12 +145,17 @@ router.post('/', upload.array('Photo'), function(req,res){
                         name: course[0].name
                     },
                     semester: req.body.semester,
-                    assignment: req.body.assignment,
+                    assignment: {
+                        name: req.body.assignmentName,
+                        description: req.body.assignmentDescription,
+                        percentage: req.body.assignmentPercentage
+                    },
                     technology: req.body.technology,
                     scope: req.body.scope,
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
+                    thumbnail: paths[0],
                     Photo: paths
                 }, function(err, project){
                     if(err) handleError(err)
@@ -154,7 +166,7 @@ router.post('/', upload.array('Photo'), function(req,res){
         })
     }
     else{
-        Student.find({id: req.body.student.id}, "-_id", function(err, student){
+        Student.find({id: req.body.studentId}, "-_id", function(err, student){
             if (err){
                 console.log(err)
             }
@@ -162,7 +174,7 @@ router.post('/', upload.array('Photo'), function(req,res){
                 res.send('Student was not FOUND !')
             }
             else{
-                Course.find({id: req.body.course.id.toUpperCase()}, function(err, course){
+                Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
                 Project.find({}, "-_id", function(err, projects){
                 Project.create({
                     id: handleID(projects),
@@ -178,12 +190,17 @@ router.post('/', upload.array('Photo'), function(req,res){
                         name: course[0].name
                     },
                     semester: req.body.semester,
-                    assignment: req.body.assignment,
+                    assignment: {
+                        name: req.body.assignmentName,
+                        description: req.body.assignmentDescription,
+                        percentage: req.body.assignmentPercentage
+                    },
                     technology: req.body.technology,
                     scope: req.body.scope,
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
+                    thumbnail: paths[0],
                     Photo: paths
                 }, function(err, project){
                     if(err) handleError(err)

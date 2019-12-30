@@ -1,6 +1,7 @@
 import React from 'react';
 import {Modal, Button} from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 const URL = "http://localhost:5000/projects"
 const URL_Course = "http://localhost:5000/courses"
@@ -22,17 +23,21 @@ export default class Projects extends React.Component{
                 id: ''
             },
             semester: '',
-            assignment: '',
+            assignmentName: '',
+            assignmentDescription: '',
+            assignmentPercentage: '',
             technology: '',
             scope: '',
             description: '',
             industry: '',
             application: '',
             Photo: [],
+            thumbnail: null,
             modalIsOpen: false
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.handleImageChange = this.handleImageChange.bind(this)
     }
     openModal() {
         this.setState({ modalIsOpen: true });
@@ -49,14 +54,19 @@ export default class Projects extends React.Component{
         this.setState({student: {
             id: e.target.value
         }
-        }, () => console.log(this.state.student.id))
+        })
     }
-    handleCategoryChange(e){ {/*  */}
+    handleImageChange(event) {
+        this.setState({
+          thumbnail: window.URL.createObjectURL(event.target.files[0])
+        })
+        
+      }
+    handleCategoryChange(e){ {/* Handle nested change */}
         this.setState({course: {
             id: e.target.value
         }});  
     }
-
     fetchProjects(){
         fetch(URL)
         .then(res=>res.json())
@@ -82,46 +92,38 @@ export default class Projects extends React.Component{
         event.preventDefault();
         this.setState({ modalIsOpen: false});
         var method = 'POST'
-        fetch(URL, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ 
-                name: this.state.name,
-                student: {
-                    id: this.state.student.id
-                },
-                course: {
-                    id: this.state.course.id
-                },
-                semester: this.state.semester,
-                assignment: this.state.assignment,
-                technology: this.state.technology,
-                scope: this.state.scope,
-                description: this.state.description,
-                industry: this.state.industry,
-                application: this.state.application
-            })
-        }).then(res=>res.json()) // get the result and convert it to json format.
-         var formData = new FormData();
-         var photos = document.querySelector('input[type="file"][multiple]');
-        for (let i = 0; i < photos.files.length; i++) {
-            formData.append('Photo', photos.files[i]);
+        var formData = new FormData();
+        var photo = document.querySelector('input[type="file"]');
+        formData.append('name', this.state.name);
+        formData.append('studentId', this.state.student.id);
+        formData.append('courseId', this.state.course.id);
+        formData.append('semester', this.state.semester);
+        formData.append('assignmentName', this.state.assignmentName);
+        formData.append('assignmentDescription', this.state.assignmentDescription);
+        formData.append('assignmentPercentage', this.state.assignmentPercentage);
+        formData.append('technology', this.state.technology);
+        formData.append('scope', this.state.scope);
+        formData.append('description', this.state.description);
+        formData.append('industry', this.state.industry);
+        formData.append('application', this.state.application);
+        formData.append('Photo', photo.files[0]);
+       axios({
+        url : URL,
+        method : 'POST',
+        headers : {
+            "Content-Type" : "multipart/form-data"
+        },
+        data : formData
+    })
+    .then(() => {
+        setTimeout(this.fetchProjects(), 10000)
+
+    })
+    .catch(error => {
+        if (error.response) {
+            console.log(error.responderEnd);
         }
-        fetch(URL, {
-            method: method,
-            body: formData,
-        })
-        .then(res=>res.json())
-        .then((result) => {
-            console.log('Success:', result);
-          })
-        .then(json=>this.fetchProjects())  
-        .catch((error) => {
-            console.error('Error:', error);
-          }); // .then syntax to finish the previous part and continue next.
+    });
     }
 
     render(){
@@ -133,33 +135,41 @@ export default class Projects extends React.Component{
                     </Button>
                 </div>
 
-                <Modal show={this.state.modalIsOpen} onHide={this.closeModal}>
+                <Modal size="lg" show={this.state.modalIsOpen} onHide={this.closeModal}>
                     <Modal.Header closeButton>
                         <Modal.Title><span style={{color: "#007bff"}}>Add a project</span></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form class="form" encType="multipart/form-data">
-                                <div class="form-group">
-                                    Name: <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
+                                <div class="form-row"> {/* First row */}
+                                    <div class="form-group col-md-6">
+                                        Name: <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        Select a Course: <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>
+                                            <option value="">--Select Category--</option>
+                                            {this.state.courses.map(c =>
+                                                <option value={c.id}>{c.id} - {c.name}</option>)}
+                                        </select>
+                                    </div>
                                 </div>
-                            <div class="form-row">
+                            <div class="form-row"> {/* Second row */}
                                 <div class="form-group col-md-6">
                                     Student's ID: <input class="form-control form-control-sm form-control form-control-sm" type="text" name="studentId" placeholder="Enter student's ID" value={this.state.student.id} onChange={this.handleNestedJSONChange.bind(this)} ></input><br />
                                 </div>
                                 <div class="form-group col-md-6">
-                                    Select a Course: <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>
-                                        <option value="">--Select Category--</option>
-                                        {this.state.courses.map(c =>
-                                            <option value={c.id}>{c.id} - {c.name}</option>)}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
                                     Semester: <input class="form-control form-control-sm" type="text" name="semester" placeholder="Which semester?" value={this.state.semester} onChange={this.handleChange.bind(this)} ></input><br />
                                 </div>
-                                <div class="form-group col-md-6">
-                                    Assignment: <input class="form-control form-control-sm" type="text" name="assignment" placeholder="Which assignment?" value={this.state.assignment} onChange={this.handleChange.bind(this)} ></input><br />
+                            </div>  
+                            <div class="form-row"> {/* Third row */}
+                                <div class="form-group col-md-4">
+                                Assignment: <input class="form-control form-control-sm" type="text" name="assignmentName" placeholder="Name of assignment" value={this.state.assignmentName} onChange={this.handleChange.bind(this)} ></input><br />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    Description: <input class="form-control form-control-sm" type="text" name="assignmentDescription" placeholder="Description of assignment" value={this.state.assignmentDescription} onChange={this.handleChange.bind(this)} ></input><br />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    Percentage: <input class="form-control form-control-sm" type="number" min="0" max="100" name="assignmentPercentage" placeholder="Percentage of assignment" value={this.state.assignmentPercentage} onChange={this.handleChange.bind(this)} ></input><br />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -167,8 +177,8 @@ export default class Projects extends React.Component{
                                 Scope: <input class="form-control form-control-sm" type="text" name="scope" placeholder="Enter scopes" value={this.state.scope} onChange={this.handleChange.bind(this)} ></input><br />
                                 Industry (optional): <input class="form-control form-control-sm" type="text" name="industry" placeholder="Enter industry" value={this.state.industry} onChange={this.handleChange.bind(this)} ></input><br />
                                 Application (optional): <input class="form-control form-control-sm" type="text" name="application" placeholder="What is it application ?" value={this.state.application} onChange={this.handleChange.bind(this)} ></input><br />
-                                Photo: <input multiple class="form-control-file form-control-sm" type="file" name="Photo"></input><br />
-                                Description: <textarea class="form-control" rows="4" cols="50" name="description" placeholder="Anything to describe your work" value={this.state.description} onChange={this.handleChange.bind(this)} />
+                                Thumbnail Image: <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br /> 
+                                Project's Description: <textarea class="form-control" rows="4" cols="50" name="description" placeholder="Anything to describe your work" value={this.state.description} onChange={this.handleChange.bind(this)} />
                             </div>
                         </form>
                     </Modal.Body>
@@ -176,7 +186,7 @@ export default class Projects extends React.Component{
                         <Button variant="secondary" onClick={this.closeModal}>
                             Close
                         </Button>
-                        <Button variant="primary" onClick={this.save.bind(this)}>
+                        <Button type="submit" variant="primary" onClick={this.save.bind(this)}>
                             Save Changes
                         </Button>
                     </Modal.Footer>
