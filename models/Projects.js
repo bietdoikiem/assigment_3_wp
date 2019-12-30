@@ -1,6 +1,36 @@
 
-var express = require('express')
-var router = express.Router()
+var express = require('express');
+var router = express.Router();
+var multer = require('multer');
+
+var storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        cb(null, './uploads/projects/')
+    },
+    filename: function(req, file, cb){
+        var fileFormat = (file.originalname).split(".");
+        cb(null, file.fieldname + '-' + Date.now() + '.' + fileFormat[fileFormat.length - 1])
+    }
+})
+
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4'){
+        cb(null, true);
+    }else{
+        cb(null, false);
+    }
+}
+
+var upload = multer({
+    storage: storage, limits:{
+    fileSize: 1024 * 1024 * 16
+    },
+    fileFilter: fileFilter
+});
+
+
+
 
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser')
@@ -19,13 +49,13 @@ const ProjectSchema =new mongoose.Schema({
     name: String,
     student: StudentSchema,
     course: CourseSchema,
-    assigment: String,
+    assignment: String,
     technology: String,
     scope: String,
     description: String,
     industry: String,
     application: String,
-    Photo: String
+    Photo: {type: String, required: true}
 });
 
 var Project = mongoose.model('projects', ProjectSchema)
@@ -74,7 +104,9 @@ router.get('/byStudent/:id', function(req,res){
     })
 })
 
-router.post('/', function(req,res){
+router.post('/', upload.array('Photo'), function(req,res){
+    console.log(req.file);
+    var paths = req.files.map(file => "/" + file.path.split("\\").join("/"))
     if (req.body.id){
         Student.find({id: req.body.student.id}, "-_id", function(err, student){
             if (err){
@@ -97,13 +129,13 @@ router.post('/', function(req,res){
                         id: req.body.course.id,
                         name: req.body.course.name
                     },
-                    assigment: req.body.assigment,
-                    technology: req.body.assigment,
+                    assignment: req.body.assignment,
+                    technology: req.body.assignment,
                     scope: req.body.scope,
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
-                    Photo: req.body.Photo
+                    Photo: paths
                 }, function(err, project){
                     res.send(project)
                 })
@@ -133,13 +165,13 @@ router.post('/', function(req,res){
                         id: req.body.course.id,
                         name: req.body.course.name
                     },
-                    assigment: req.body.assigment,
-                    technology: req.body.assigment,
+                    assignment: req.body.assignment,
+                    technology: req.body.assignment,
                     scope: req.body.scope,
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
-                    Photo: req.body.Photo
+                    Photo: paths
                 }, function(err, project){
                     res.send(project)
                 })
@@ -152,6 +184,7 @@ router.post('/', function(req,res){
 
 router.delete('/:id', function(req, res){
     Project.deleteOne({id: req.params.id}, function(err, result){
+        if (err) handleError(err)
         res.send(result)
     })
 })
@@ -178,8 +211,8 @@ router.put('/:id', function(req, res){
             id: req.body.course.id,
             name: req.body.course.name
         },
-        assigment: req.body.assigment,
-        technology: req.body.assigment,
+        assignment: req.body.assignment,
+        technology: req.body.assignment,
         scope: req.body.scope,
         description: req.body.description,
         industry: req.body.industry,

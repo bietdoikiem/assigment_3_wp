@@ -8,7 +8,7 @@ How-to-use Back-end URLS:
 ### STUDENTS
 GET: /students : get all students. <br/>
 GET: /students/id : get student by id. <br/>
-POST: /students : post a student. ( requires a proper id ) <br/>
+POST: /students : post a student. ( requires a proper id )  (File stored in route /uploads/students/[filename]) <br/>
 DELETE: /students/id : delete a student by id. <br/>
 PUT: /students/id : Update a student. <br/>
 GET: /students/all/filter?name=[student_name] : Search for students by name. <br/>
@@ -16,7 +16,7 @@ GET: /students/all/filter?name=[student_name] : Search for students by name. <br
 ### COURSES
 GET: /courses : get all courses. <br/>
 GET: /courses/id : get course by id. <br/>
-POST: /courses : post a course ( requires a proper id ) <br/>
+POST: /courses : post a course ( requires a proper id ) (File stored in route /uploads/courses/[filename]) <br/>
 DELETE: /courses/id : delete a course by id. <br/>
 PUT: /courses/id : Update a course. <br/> 
 GET: /courses/all/filter?name=[course_name] : Search for courses by name. <br/>
@@ -26,7 +26,7 @@ GET: /projects : get all projects. <br/>
 GET: /projects/id : get project by id. <br/> 
 GET: /projects/byCourse/id : get project by course's id. <br/> 
 GET: /projects/byStudent/id : get project by student's id. <br/> 
-POST: /projects : post a project (require a proper student ID)<br/>
+POST: /projects : post a project (require a proper student ID)  (File stored in route /uploads/projects/[filename])<br/>
 DELETE: /projects/id : delete a project by id. <br/>
 PUT: /projects/id : Update a project. <br/> 
 GET: /projects/all/filter?name=[project_name] : Search for projects by name.<br/>

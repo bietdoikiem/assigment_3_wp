@@ -1,0 +1,1 @@
+this folder contains students' images
