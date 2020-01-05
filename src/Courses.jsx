@@ -34,7 +34,7 @@ export default class Courses extends React.Component{
     }
     save(){
         
-     var url ='http://13.58.103.107:5000/courses'
+     var url ='http://localhost:5000/courses'
      fetch(url,{
          method:'POST',
          headers: {
@@ -47,7 +47,7 @@ export default class Courses extends React.Component{
      }
      Update(id){
         
-        var url ='http://13.58.103.107:5000/courses'
+        var url ='http://localhost:5000/courses'
         fetch(url+ "/"+id,{
             method:'PUT',
             headers: {
@@ -59,7 +59,7 @@ export default class Courses extends React.Component{
              .then(json=> this.fetchData())
         }
     delete(id){
-        var url ='http://13.58.103.107:5000/courses'
+        var url ='http://localhost:5000/courses'
         if(window.confirm('Are you sure you want to delete this courses '))
         {
             fetch(url + "/"+id, {

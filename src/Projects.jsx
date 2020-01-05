@@ -1,29 +1,43 @@
 import React from 'react';
 import {Modal, Button} from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import axios from 'axios';
+
+const URL = "http://localhost:5000/projects"
+const URL_Course = "http://localhost:5000/courses"
+const formData = new FormData();
+const photos = document.querySelector('input[type="file"][multiple]');
+
 
 export default class Projects extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            projects: [],
+            courses: [],
             name: '',
-            student:{
+            student: {
                 id: ''
             },
             course: {
-                id: '',
-                name: ''
+                id: ''
             },
-            assignment: '',
+            semester: '',
+            assignmentName: '',
+            assignmentDescription: '',
+            assignmentPercentage: '',
             technology: '',
             scope: '',
             description: '',
             industry: '',
             application: '',
             Photo: [],
+            thumbnail: null,
             modalIsOpen: false
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.handleImageChange = this.handleImageChange.bind(this)
     }
     openModal() {
         this.setState({ modalIsOpen: true });
@@ -36,36 +50,143 @@ export default class Projects extends React.Component{
         obj[e.target.name] = e.target.value
         this.setState(obj)
     }
-    handleCategoryChange(event){
-        this.setState({'course.id': event.target.value, 'course.name': event.target.value});
+    handleNestedJSONChange(e){
+        this.setState({student: {
+            id: e.target.value
+        }
+        })
+    }
+    handleImageChange(event) {
+        this.setState({
+          thumbnail: window.URL.createObjectURL(event.target.files[0])
+        })
+        
+      }
+    handleCategoryChange(e){ {/* Handle nested change */}
+        this.setState({course: {
+            id: e.target.value
+        }});  
+    }
+    fetchProjects(){
+        fetch(URL)
+        .then(res=>res.json())
+        .then(json=>{
+            this.setState({projects: json})   
+    })
+    }
+    
+    fetchCourses(){
+        fetch(URL_Course)
+        .then(res=>res.json())
+        .then(json=>{
+            this.setState({courses: json})   
+    })
+    }
+
+    componentDidMount(){
+        this.fetchProjects();
+        this.fetchCourses();
+    }
+
+    save(event){
+        event.preventDefault();
+        this.setState({ modalIsOpen: false});
+        var method = 'POST'
+        var formData = new FormData();
+        var photo = document.querySelector('input[type="file"]');
+        formData.append('name', this.state.name);
+        formData.append('studentId', this.state.student.id);
+        formData.append('courseId', this.state.course.id);
+        formData.append('semester', this.state.semester);
+        formData.append('assignmentName', this.state.assignmentName);
+        formData.append('assignmentDescription', this.state.assignmentDescription);
+        formData.append('assignmentPercentage', this.state.assignmentPercentage);
+        formData.append('technology', this.state.technology);
+        formData.append('scope', this.state.scope);
+        formData.append('description', this.state.description);
+        formData.append('industry', this.state.industry);
+        formData.append('application', this.state.application);
+        formData.append('Photo', photo.files[0]);
+       axios({
+        url : URL,
+        method : 'POST',
+        headers : {
+            "Content-Type" : "multipart/form-data"
+        },
+        data : formData
+    })
+    .then(() => {
+        setTimeout(this.fetchProjects(), 10000)
+
+    })
+    .catch(error => {
+        if (error.response) {
+            console.log(error.responderEnd);
+        }
+    });
     }
 
     render(){
         return(
             <div>
-                <p>Projects Page</p>
-                <div class="float-left">
-                    <Button variant="primary" onClick={this.openModal}>
-                        Add a project
+                <div class="float-left mt-2">
+                    <Button variant="primary"  onClick={this.openModal}>
+                        Add a project &nbsp;<i class='fas fa-plus'></i>
                     </Button>
                 </div>
 
-                <Modal show={this.state.modalIsOpen} onHide={this.closeModal}>
+                <Modal size="lg" show={this.state.modalIsOpen} onHide={this.closeModal}>
                     <Modal.Header closeButton>
                         <Modal.Title><span style={{color: "#007bff"}}>Add a project</span></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form>
-                            Name: <input type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
-                            Student's ID: <input type="text" name="studentid" placeholder="Enter student's ID" value={this.state.student.id} onChange={this.handleChange.bind(this)} ></input><br/>
-
+                        <form class="form" encType="multipart/form-data">
+                                <div class="form-row"> {/* First row */}
+                                    <div class="form-group col-md-6">
+                                        Name: <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        Select a Course: <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>
+                                            <option value="">--Select Category--</option>
+                                            {this.state.courses.map(c =>
+                                                <option value={c.id}>{c.id} - {c.name}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+                            <div class="form-row"> {/* Second row */}
+                                <div class="form-group col-md-6">
+                                    Student's ID: <input class="form-control form-control-sm form-control form-control-sm" type="text" name="studentId" placeholder="Enter student's ID" value={this.state.student.id} onChange={this.handleNestedJSONChange.bind(this)} ></input><br />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    Semester: <input class="form-control form-control-sm" type="text" name="semester" placeholder="Which semester?" value={this.state.semester} onChange={this.handleChange.bind(this)} ></input><br />
+                                </div>
+                            </div>  
+                            <div class="form-row"> {/* Third row */}
+                                <div class="form-group col-md-4">
+                                Assignment: <input class="form-control form-control-sm" type="text" name="assignmentName" placeholder="Name of assignment" value={this.state.assignmentName} onChange={this.handleChange.bind(this)} ></input><br />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    Description: <input class="form-control form-control-sm" type="text" name="assignmentDescription" placeholder="Description of assignment" value={this.state.assignmentDescription} onChange={this.handleChange.bind(this)} ></input><br />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    Percentage: <input class="form-control form-control-sm" type="number" min="0" max="100" name="assignmentPercentage" placeholder="Percentage of assignment" value={this.state.assignmentPercentage} onChange={this.handleChange.bind(this)} ></input><br />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                Technology: <input class="form-control form-control-sm" type="text" name="technology" placeholder="Enter used technology" value={this.state.technology} onChange={this.handleChange.bind(this)} ></input><br />
+                                Scope: <input class="form-control form-control-sm" type="text" name="scope" placeholder="Enter scopes" value={this.state.scope} onChange={this.handleChange.bind(this)} ></input><br />
+                                Industry (optional): <input class="form-control form-control-sm" type="text" name="industry" placeholder="Enter industry" value={this.state.industry} onChange={this.handleChange.bind(this)} ></input><br />
+                                Application (optional): <input class="form-control form-control-sm" type="text" name="application" placeholder="What is it application ?" value={this.state.application} onChange={this.handleChange.bind(this)} ></input><br />
+                                Thumbnail Image: <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br /> 
+                                Project's Description: <textarea class="form-control" rows="4" cols="50" name="description" placeholder="Anything to describe your work" value={this.state.description} onChange={this.handleChange.bind(this)} />
+                            </div>
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.closeModal}>
                             Close
                         </Button>
-                        <Button variant="primary" onClick={this.closeModal}>
+                        <Button type="submit" variant="primary" onClick={this.save.bind(this)}>
                             Save Changes
                         </Button>
                     </Modal.Footer>
