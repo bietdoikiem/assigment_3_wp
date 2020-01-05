@@ -11,12 +11,13 @@ export default class Courses extends React.Component{
             courses: [],
             id: '',
             name: '',
+            Course_Photo:'',
             grid_view:false
  
         }
     }
     fetchData(){
-        var url = 'http://13.58.103.107:5000/courses'
+        var url = 'http://localhost:5000/courses'
         fetch(url)
             .then(res=>res.json())
             .then(json=>this.setState({courses: json}))
@@ -75,6 +76,7 @@ export default class Courses extends React.Component{
         console.log('it worked')
     }
     render(){
+        let photo = 'localhost:5000'+this.state.Course_Photo
         const {grid_view} = this.state.grid_view
         return(
             <div>
@@ -90,9 +92,9 @@ export default class Courses extends React.Component{
                     <div>
                         { this.state.grid_view === true ?
                             <div className="course" >
-                                <img  class="card-img-top" />
+                                <img  class="card-img-top" src={'http://localhost:5000'+s.Course_Photo} />
                                 <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
+                                <h5 class="card-title">{s.name}</h5>
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                     <a href="#" class="btn btn-primary">Go somewhere</a>
                                 </div>
