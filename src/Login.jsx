@@ -27,7 +27,7 @@ export default class Login extends React.Component{
         })
         .then(res=>res.json())
         .then(data=>{
-            if(data.result == 'authenticated'){
+            if(data.result === 'authenticated'){
                 alert('Login successfully')
                 window.sessionStorage.setItem('isAuthenticated', 1)
                 this.props.history.push('/projects')

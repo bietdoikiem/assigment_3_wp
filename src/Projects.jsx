@@ -247,7 +247,7 @@ export default class Projects extends React.Component{
                         <form class="form" encType="multipart/form-data">
                                 <div class="form-row"> {/* First row */}
                                     <div class="form-group col-md-6">
-                                        Name:<span style={{color: "red"}}>*</span> <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
+                                        Project's Name:<span style={{color: "red"}}>*</span> <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
                                     </div>
                                     <div class="form-group col-md-6">
                                         Select a Course:<span style={{color: "red"}}>*</span> <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>

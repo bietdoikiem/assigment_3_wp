@@ -6,9 +6,22 @@ export default class CreateAdmin extends React.Component{
     
     constructor(){
         super()
-        this.state = {username: '', password: ''}
+        this.state = {admins: [], 
+            username: '', 
+            password: '',
+            modalIsOpen: false,
+        }
+        this.openModal=this.openModal.bind(this);
+        this.closeModal=this.closeModal.bind(this)
     }
-
+    openModal(event){
+        event.preventDefault();
+        this.setState({modalIsOpen: true})
+    }
+    closeModal(event){
+        event.preventDefault();
+        this.setState({modalIsOpen: false})
+    }
     handleChange(e){
         var obj = {}
         obj[e.target.name] = e.target.value
@@ -36,6 +49,14 @@ export default class CreateAdmin extends React.Component{
             }
         })
     }
+    fetchAdmins(){
+        fetch('http://localhost:5000/admins/')
+        .then(res=>res.json())
+        .then(json=>this.setState({admins: json}))
+    }
+    componentDidMount(){
+        this.fetchAdmins();
+    }
 
     render(){
         return(
@@ -51,12 +72,25 @@ export default class CreateAdmin extends React.Component{
                                 <input type="password" name="password" class="form-control" placeholder="Enter password" onChange={this.handleChange.bind(this)}/>
                                 <button class="btn btn-lg btn-primary btn-block" onClick={this.create.bind(this)}>
                                     Create admin</button>
-                                <button class="btn btn-lg btn-danger btn-block">
+                                <button class="btn btn-lg btn-danger btn-block" onClick={this.openModal}>
                                 List of Admins</button>
                             </form>
                         </div>
                     </div>
                 </div>
+                <Modal size="lg" show={this.state.modalIsOpen} onHide={this.closeModal}>
+                        <Modal.Header closeButton>
+                            <Modal.Title><span style={{ color: "#007bff" }}>List of Adminstrators</span></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
+                            {this.state.admins.map(s=><li>{s.username}</li>)}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={this.closeModal}>
+                                Close
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
             </div>
         )
     }
