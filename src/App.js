@@ -5,6 +5,7 @@ import Home from './Home.jsx';
 import Projects from './Projects.jsx'
 import Courses from './Courses.jsx'
 import AddCourses from './Add_courses'
+import Student from './Students.jsx'
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom'
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/projects" component={Projects}/>
                 <Route path="/courses" component={Courses}/>
                 <Route path="/Add_courses" component={AddCourses}/>
+                <Route path="/students" component={Student}/>
               </Switch>
             </div>
           </div>

@@ -167,6 +167,9 @@ footer {
     width: 262px;
     height: 146px;
 }
+.card-img-top img{
+    transition: 3s;
+}
 .btn.active{
     background-color: #666;
     color: white;
@@ -174,6 +177,20 @@ footer {
 .course{
     width: 262px;
     min-height: 200px;
-    outline-style: solid;
-    border-color: red;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 2px 2px 5px;
+    text-emphasis-position: 10px;
+    
+
 }
+.course :hover{
+    transform: scale(1.1);
+}
+.course :hover{
+    overflow: hidden;
+}
+.float-left{
+    margin-right: 20px;
+}
+

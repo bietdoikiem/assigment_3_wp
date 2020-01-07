@@ -78,7 +78,8 @@ router.post('/',upload.single('Student_Photo') , function(req,res){
     Student.create({
         id: req.body.id,
         name: req.body.name,
-        Student_Photo: path.replace(req.file.filename, '256x256-' + req.file.filename)
+        year: req.body.year,
+        Student_Photo: path.replace(req.file.filename, '256x256-' + req.file.filename) // trung` field nay nha a
     }, function(err, student){
         res.send(student)
     })
