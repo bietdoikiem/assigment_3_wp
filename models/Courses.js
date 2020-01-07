@@ -84,6 +84,14 @@ router.post('/', upload.single('Course_Photo') , function(req,res){
 })
 
 router.delete('/:id', function(req, res){
+    Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
+        if(err){ handleError(err)}
+        else if(!course.Course_Photo){
+            if(typeof course.Course_Photo !== 'undefined' && course.Course_Photo !== ''){
+                fs.unlinkSync('.'+course.Course_Photo);
+            }
+        }
+    })
     Course.deleteOne({id: req.params.id.toUpperCase()}, function(err, result){
         res.send(result)
     })

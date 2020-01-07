@@ -17,7 +17,7 @@ var storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     // reject a file
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4'){
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4' || file.mimetype === 'video/x-flv' || file.mimetype === 'video/x-msvideo' || file.mimetype === 'video/quicktime'){
         cb(null, true);
     }else{
         cb(null, false);
@@ -26,7 +26,7 @@ const fileFilter = (req, file, cb) => {
 
 var upload = multer({
     storage: storage, limits:{
-    fileSize: 1024 * 1024 * 100
+    fileSize: 1024 * 1024 * 200
     },
     fileFilter: fileFilter
 });
@@ -36,6 +36,7 @@ var upload = multer({
 
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser')
+mongoose.set('useFindAndModify', false);
 // Routing part
 var CourseSchema = require('../schemas/Courses').schema
 var StudentSchema = require('../schemas/Students').schema
@@ -52,6 +53,7 @@ const AssignmentSchema =new mongoose.Schema({
     percentage: String
 })
 
+
 const ProjectSchema =new mongoose.Schema({
     id: String,
     name: String,
@@ -64,8 +66,9 @@ const ProjectSchema =new mongoose.Schema({
     description: String,
     industry: String,
     application: String,
-    thumbnail: String,
-    Photo: {type: Array, default: [], required: true, default: "./uploads/projects/Photo-1577492549772.png"}
+    Thumbnail: String,
+    Photo: {type: Array, default: [], required: false},
+    Video: {type: Array, default: [], required: false}
 });
 
 var Project = mongoose.model('projects', ProjectSchema)
@@ -76,8 +79,32 @@ var Course = mongoose.model('courses', CourseSchema)
 
 
 router.get('/', function (req, res) {
-    Project.find({}, function (err, projects) {
-        res.send(projects)
+    var pageNo = parseInt(req.query.pageNo)
+    var size = parseInt(req.query.size)
+    var query = {}
+    if(pageNo <= 0 || pageNo === 0) {
+          response = {"error" : true,"message" : "invalid page number, should start with 1"};
+          return res.json(response)
+    }
+    query.skip = size * (pageNo - 1)
+    query.limit = size
+    Project.countDocuments({},function(err,totalCount) {
+        if(err) {
+          response = {"error" : true,"message" : "Error fetching data"}
+        }
+        Project.find({},{},query, function (err, projects) {
+            if(err){
+                response = {"error" : true,"message" : "Not found"};
+            } else {
+                var total = []
+                var totalPages = Math.ceil(totalCount / size)
+                for(i = 1; i <= totalPages; i++){
+                    total.push(i)
+                }
+                response = {"error" : false, 'data': projects , "pageNo": parseInt(req.query.pageNo), "pages": total};
+            }
+            res.json(response);
+        })
     })
 })
 
@@ -92,34 +119,42 @@ router.get('/:id', function (req, res) {
     })
 })
 
-router.get('/byCourse/:id', function(req,res){
-    Project.find({'course.id': req.params.id.toUpperCase()}, function(err, projects){
-        if(projects.length > 0){
-            res.send(projects)
-        }
-        else{
-            res.send("Not found")
-        }
-    })
-})
 
-router.get('/byStudent/:id', function(req,res){
-    Project.find({'student.id': req.params.id.toLowerCase()}, function(err, projects){
-        if(projects.length > 0){
-            res.send(projects)
-        }
-        else{
-            res.send("Not found")
-        }
-    })
-})
 
-router.post('/', upload.array('Photo'), function(req,res){
-    console.log(req.files);
-    if (req.files){
-    var paths = req.files.map(file => {path = "/" + file.path.split("\\").join("/");
-                                        return path})
-    console.log(paths)
+router.get('/all/filter', function (req, res) {
+    if (req.query.cId === '') {
+        Project.find({name: { $regex: req.query.name, $options: 'i'} },
+            function (err, projects) {
+                if (err) handleError(err)
+                res.send(projects)
+            }).sort({ name: 1 })
+    }
+    else if(req.query.name === ''){
+        Project.find({ 'course.id': req.query.cId.toUpperCase() },
+            function (err, projects) {
+                if (err) handleError(err)
+                res.send(projects)
+            }).sort({ name: 1 })
+    }
+    else if(typeof req.query.name !== 'undefined' && typeof req.query.cId !== 'undefined'){
+        Project.find({$and: [
+            {name: { $regex: req.query.name, $options: 'i'}},
+            {'course.id': req.query.cId.toUpperCase()}
+            ]},
+            function(err, projects){
+                if(err) handleError(err)
+                res.send(projects)
+            }).sort({name: 1})
+    }
+ })
+ 
+
+
+
+router.post('/', upload.single('Thumbnail'), function(req,res){
+    if (req.file){
+    var path = "/" + req.file.path.split("\\").join("/")
+    console.log(path)
     }
     if (req.body.id){
         Student.find({id: req.body.studentId}, "-_id", function(err, student){
@@ -127,7 +162,7 @@ router.post('/', upload.array('Photo'), function(req,res){
                 console.log(err)
             }
             else if (student.length == 0){
-                res.send('Student was not FOUND !')
+                res.send('Student not found')
             }
             else{
                 Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
@@ -155,8 +190,8 @@ router.post('/', upload.array('Photo'), function(req,res){
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
-                    thumbnail: paths[0],
-                    Photo: paths
+                    Thumbnail: path,
+                    Photo: path
                 }, function(err, project){
                     if(err) handleError(err)
                     res.send(project)
@@ -171,7 +206,7 @@ router.post('/', upload.array('Photo'), function(req,res){
                 console.log(err)
             }
             else if (student.length == 0){
-                res.send('Student was not FOUND !')
+                res.send('Student not found')
             }
             else{
                 Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
@@ -180,7 +215,6 @@ router.post('/', upload.array('Photo'), function(req,res){
                     id: handleID(projects),
                     name: req.body.name,
                     student: {
-                        _id: req.body._id,
                         id: student[0].id,
                         name: student[0].name,
                         year: student[0].year
@@ -200,8 +234,8 @@ router.post('/', upload.array('Photo'), function(req,res){
                     description: req.body.description,
                     industry: req.body.industry,
                     application: req.body.application,
-                    thumbnail: paths[0],
-                    Photo: paths
+                    Thumbnail: path,
+                    Photo: path
                 }, function(err, project){
                     if(err) handleError(err)
                     res.send(project)
@@ -214,32 +248,10 @@ router.post('/', upload.array('Photo'), function(req,res){
     }
 })
 
-router.delete('/:id', function(req, res){
-    Project.deleteOne({id: req.params.id}, function(err, result){
-        if (err) handleError(err)
-        res.send(result)
-    })
-})
-
-
-router.put('/:id', upload.array('Photo'), function(req, res){
-    console.log(req.files);
-    if(req.file){
-        Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
-            if(err) handleError(err)
-            fs.unlinkSync('.'+course.Course_Photo)
-        } )
-        var path = "/" + req.file.path.split("\\").join("/")
-        console.log(req.file);
-        sharp(req.file.path).resize(262, 146).toFile('./uploads/courses/' + '262x146-' + req.file.filename , function(err) {
-            if (err) {
-                console.error('sharp>>>', err)
-            }
-            console.log('Resize successfully')
-            fs.unlinkSync('./'+path)
-            });
-            console.log(path)
-    Student.find({id: req.body.student.id}, "-_id", function(err, student){
+// PUT method for project details:
+router.put('/:id', function(req, res){
+    if(req.body.studentId){
+    Student.find({id: req.body.studentId}, "-_id", function(err, student){
         if (err){
             console.log(err)
         }
@@ -247,32 +259,120 @@ router.put('/:id', upload.array('Photo'), function(req, res){
             res.send('Student was not FOUND !')
         }
         else{
-    Project.findOneAndUpdate({id: req.params.id},{
-        name: req.body.name,
-        student: {
-            _id: req.body._id,
-            id: student[0].id,
-            name: student[0].name,
-            year: student[0].year
-        },
-        course: {
-            id: req.body.course.id,
-            name: req.body.course.name
-        },
-        assignment: req.body.assignment,
-        technology: req.body.assignment,
-        scope: req.body.scope,
-        description: req.body.description,
-        industry: req.body.industry,
-        application: req.body.application,
-        Photo: req.body.Photo
-    }, function(err, result){
-        res.send(result)
+        Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
+            if (err) handleError(err);
+            Project.findOneAndUpdate({id: req.params.id}, {
+                name: req.body.name,
+                student: {
+                    id: student[0].id,
+                    name: student[0].name,
+                    year: student[0].year
+                },
+                course: {
+                    id: course[0].id,
+                    name: course[0].name
+                },
+                semester: req.body.semester,
+                assignment: {
+                    name: req.body.assignmentName,
+                    description: req.body.assignmentDescription,
+                    percentage: req.body.assignmentPercentage
+                },
+                technology: req.body.technology,
+                scope: req.body.scope,
+                description: req.body.description,
+                industry: req.body.industry,
+                application: req.body.application
+            }, function (err, result) {
+                    if(err) handleError(err)
+                    res.send(result)
+                })
+        })
+        }
     })
     }
- })
+ }) 
+
+
+// Put images to slideshow
+router.put('/:id/photos', upload.array('Photo'), function(req, res){
+    console.log(req.files)
+    if(req.files){
+        Project.findOne({id: req.params.id}, function(err, project){
+            if(err){ 
+                handleError(err)
+            }else{
+                for(i=0; i < project.Photo.length; i++){
+                    if (project.Photo[i].indexOf("/uploads/projects/Thumbnail") !== 0){
+                        fs.unlinkSync('.'+project.Photo[i]);
+                    }
+                }
+            }
+        })
+    var paths = req.files.map(file => {path = "/" + file.path.split("\\").join("/");
+    return path})
+    console.log(paths)
+    Project.findOneAndUpdate({id: req.params.id},{
+        Photo: paths
+    }, function(err, result){
+        if(err) handleError(err)
+        res.send(result);
+    })
     }
 })
+
+// Put videos to showcases
+router.put('/:id/videos', upload.array('Video'), function(req, res){
+    console.log(req.files)
+    if(req.files){
+        Project.findOne({id: req.params.id}, function(err, project){
+            if(err){ 
+                handleError(err)
+            }else{
+                for(i=0; i < project.Video.length; i++){
+                    fs.unlinkSync('.'+project.Video[i]);
+                }
+            }
+        })
+    var paths = req.files.map(file => {path = "/" + file.path.split("\\").join("/");
+                                        return path})
+    console.log(paths)
+    
+    Project.findOneAndUpdate({id: req.params.id},{
+        Video: paths
+    }, function(err, result){
+        if(err) handleError(err)
+        res.send(result);
+    })
+    }
+})
+
+router.delete('/:id', function(req, res){
+    Project.findOne({id: req.params.id}, function(err, project){
+        if(err){ 
+            handleError(err)
+        }else{
+            for(i=0; i < project.Photo.length; i++){
+                if (project.Photo[i].indexOf("/uploads/projects/Thumbnail") !== 0){
+                    fs.unlinkSync('.'+project.Photo[i]);
+                }
+            }
+            if (project.Video.length > 0){
+                for(i=0; i < project.Video.length; i++){
+                    fs.unlinkSync('.'+project.Video[i]);
+                }
+            }
+            fs.unlinkSync('.'+project.Thumbnail);
+        }
+    })
+    Project.deleteOne({id: req.params.id}, function(err, result){
+        if (err) handleError(err)
+        res.send(result)
+    })
+})
+
+
+
  
 
 /* router.get('/search/:keyword',function(req,res){
@@ -285,15 +385,7 @@ router.put('/:id', upload.array('Photo'), function(req, res){
     })
 }) */
 
-router.get('/all/filter', function (req, res) {
-    Project.find(
-        { name: { $regex: req.query.name, $options :'i'} },
-        function (err, projects) {
-            if(err) handleError(err)
-            res.send(projects)
-        }).sort({name: 1})
- })
- 
+
 
 function handleError(err){
     console.log(err)

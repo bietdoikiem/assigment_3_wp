@@ -24,12 +24,10 @@ GET: /courses/all/filter?name=[course_name] : Search for courses by name. <br/>
 ### PROJECTS
 GET: /projects : get all projects. <br/> 
 GET: /projects/id : get project by id. <br/> 
-GET: /projects/byCourse/id : get project by course's id. <br/> 
-GET: /projects/byStudent/id : get project by student's id. <br/> 
 POST: /projects : post a project (require a proper student ID)  (File stored in route /uploads/projects/[filename])<br/>
 DELETE: /projects/id : delete a project by id. <br/>
 PUT: /projects/id : Update a project. <br/> 
-GET: /projects/all/filter?name=[project_name] : Search for projects by name.<br/>
+GET: /projects/all/filter?name=[project_name]&cId=[course_ID] : Search for projects by name and course Id<br/>
 
 Front-end: http://localhost:3000
 

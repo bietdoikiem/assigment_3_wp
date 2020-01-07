@@ -25,12 +25,6 @@ export default class Students extends React.Component{
             .then(res=>res.json())
             .then(json=>this.setState({students: json}))
     }    
-    fetchUpdate(url){
-        var url = url
-        fetch(url)
-            .then(res=>res.json())
-            .then(json=>this.setState({students: json}))
-    }  
     componentWillMount(){
         this.fetchData()
     }
@@ -78,12 +72,11 @@ export default class Students extends React.Component{
     }
      Update(id){
         
-        var url ='http://localhost:5000/students/' + id
+        var url ='http://localhost:5000/students/'
         this.setState({ modalIsOpen: false});
         var method = 'POST'
         var formData = new FormData();
         var photo = document.querySelector('input[type="file"]');
-        formData.append('id', this.state.id);
         formData.append('name', this.state.name);
         formData.append('year', this.state.year);
         formData.append('Student_Photo', photo.files[0]);
@@ -96,7 +89,7 @@ export default class Students extends React.Component{
         data : formData
     })
     .then(() => {
-        setTimeout(this.fetchUpdate(url), 10000)
+        setTimeout(this.fetchUpdate(), 10000)
 
     })
     .catch(error => {
@@ -123,8 +116,6 @@ export default class Students extends React.Component{
         console.log('it worked')
     }
     render(){
-        let photo = 'localhost:5000'+this.state.Student_Photo
-        const {grid_view} = this.state.grid_view
         return(
             <div>
                 <BrowserRouter>
