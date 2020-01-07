@@ -90,7 +90,7 @@ export default class Courses extends React.Component{
                     <div>
                         { this.state.grid_view === true ?
                             <div className="course" >
-                                <img  class="card-img-top" />
+                                <img  class="card-img-top" alt="card img" />
                                 <div class="card-body">
                                     <h5 class="card-title">Card title</h5>
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>

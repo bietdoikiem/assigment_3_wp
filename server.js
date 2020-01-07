@@ -17,6 +17,17 @@ app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/mydb', { useNewUrlParser: true, useUnifiedTopology: true });
 
+app.post('/login', function(req, res){
+    var user = req.body
+    if(user.username === 'admin' && user.password === 'admin'){
+        res.send({'result': 'authenticated'})
+    }
+    else{
+        res.send({'result': 'Unauthenticated'})
+    }
+})
+
+
 app.use('/students', students)
 app.use('/courses', courses)
 app.use('/projects', projects)
