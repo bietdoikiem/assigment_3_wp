@@ -14,10 +14,18 @@ import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom'
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 
+
 export default class App extends React.Component {
   constructor(){
     super()
     this.state = {isAuthenticated: 0}
+  }
+
+  componentWillMount(){
+    if (window.sessionStorage.getItem("isAuthenticated") === null) {
+      window.sessionStorage.setItem('isAuthenticated', 0)
+    }
+    this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')})
   }
   render(){
   return (

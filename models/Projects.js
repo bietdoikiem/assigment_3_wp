@@ -162,7 +162,7 @@ router.post('/', upload.single('Thumbnail'), function(req,res){
                 console.log(err)
             }
             else if (student.length == 0){
-                res.send('Student was not FOUND !')
+                res.send('Student not found')
             }
             else{
                 Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
@@ -206,7 +206,7 @@ router.post('/', upload.single('Thumbnail'), function(req,res){
                 console.log(err)
             }
             else if (student.length == 0){
-                res.send('Student was not FOUND !')
+                res.send('Student not found')
             }
             else{
                 Course.find({id: req.body.courseId.toUpperCase()}, function(err, course){
@@ -348,6 +348,23 @@ router.put('/:id/videos', upload.array('Video'), function(req, res){
 })
 
 router.delete('/:id', function(req, res){
+    Project.findOne({id: req.params.id}, function(err, project){
+        if(err){ 
+            handleError(err)
+        }else{
+            for(i=0; i < project.Photo.length; i++){
+                if (project.Photo[i].indexOf("/uploads/projects/Thumbnail") !== 0){
+                    fs.unlinkSync('.'+project.Photo[i]);
+                }
+            }
+            if (project.Video.length > 0){
+                for(i=0; i < project.Video.length; i++){
+                    fs.unlinkSync('.'+project.Video[i]);
+                }
+            }
+            fs.unlinkSync('.'+project.Thumbnail);
+        }
+    })
     Project.deleteOne({id: req.params.id}, function(err, result){
         if (err) handleError(err)
         res.send(result)

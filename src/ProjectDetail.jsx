@@ -33,7 +33,8 @@ export default class ProjectDetail extends React.Component {
             file: [null],
             modalIsOpen: false,
             modalIsOpenVideo: false,
-            modalIsOpenUpdate: false
+            modalIsOpenUpdate: false,
+            isAuthenticated: 0,
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -225,6 +226,9 @@ export default class ProjectDetail extends React.Component {
         this.fetchProject();
         this.fetchCourses();
     }
+    componentWillMount(){
+        this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')}, () => console.log(this.state.isAuthenticated))      
+    }
 
 
     render() {
@@ -236,9 +240,10 @@ export default class ProjectDetail extends React.Component {
                                 <div class="col-6 col-md-6 w-100 mt-2">
                                     <h3  style={{color: "#252525"}}>Project Showcases</h3> 
                                 </div>
+                                {this.state.isAuthenticated == 1 &&
                                 <div class="col-6 col-md-6 w-100 mt-2 ml-1">
                                     <Button variant="primary" onClick={this.openModal}>Add images <i class="fas fa-plus fa-xs"></i> <i class="fa fa-camera" aria-hidden="true"></i></Button>
-                                </div>
+                                </div>}
                             </div>
                             <br/>
                             <br/>
@@ -246,7 +251,8 @@ export default class ProjectDetail extends React.Component {
                                 {this.state.project.Photo?.map(p => <div><img src={`http://localhost:5000${p}`} /></div>)}
                             </Carousel>
                             <h3 class="mt-1" style={{color: "#252525"}}>Project Videos</h3> 
-                            <Button variant="primary mt-2" onClick={this.openVideoModal}>Add video  <i class="fas fa-plus fa-xs"></i> <i class="fa fa-video-camera" aria-hidden="true"></i></Button>
+                            {this.state.isAuthenticated == 1 &&
+                            <Button variant="primary mt-2" onClick={this.openVideoModal}>Add video  <i class="fas fa-plus fa-xs"></i> <i class="fa fa-video-camera" aria-hidden="true"></i></Button>}
                             {this.state.project.Video ? this.state.project.Video.map(url=>
                                 <div class="showVideo mt-2">
                                     <video src={`http://localhost:5000${url}`} width="510" height="286" preload="metadata" controls />
@@ -255,8 +261,9 @@ export default class ProjectDetail extends React.Component {
                         </div>
                         
                         <div class="col-6 col-md-6 w-100">
-                            <div class="mt-3">
-                                <h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3><Button variant="primary ml-3 mb-2" onClick={this.openUpdateModal}>Edit <i class="fas fa-edit"></i></Button><Button variant="danger ml-2 mb-2" onClick={this.delete.bind(this)}>Delete <i class="far fa-trash-alt"></i></Button>
+                            <div class="mt-3">        
+                            {this.state.isAuthenticated == 1 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3><Button variant="primary ml-3 mb-2" onClick={this.openUpdateModal}>Edit <i class="fas fa-edit"></i></Button><Button variant="danger ml-2 mb-2" onClick={this.delete.bind(this)}>Delete <i class="far fa-trash-alt"></i></Button></div>}
+                            {this.state.isAuthenticated == 0 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3></div>}
                                 <div>
                                     {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} </small> : '' }
                                 </div>

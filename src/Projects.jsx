@@ -40,6 +40,7 @@ export default class Projects extends React.Component{
             size: 4,
             keyword: '',
             category: '',
+            isAuthenticated: 0,
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -49,8 +50,7 @@ export default class Projects extends React.Component{
         this.setState({ modalIsOpen: true });
     }
     closeModal() {
-        this.setState({ modalIsOpen: false });
-        
+        this.setState({ modalIsOpen: false, thumbnail: null });  
     }
     handleChange(e){
         var obj = {}
@@ -109,6 +109,10 @@ export default class Projects extends React.Component{
             50
         );
     }
+    componentWillMount(){
+        this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')}, () => console.log(this.state.isAuthenticated))
+        
+    }
 
 
     save(event){
@@ -130,6 +134,7 @@ export default class Projects extends React.Component{
         formData.append('industry', this.state.industry);
         formData.append('application', this.state.application);
         formData.append('Thumbnail', photo.files[0]);
+    if (formData.get('studentId') !== '' && formData.get('courseId') !== '' && formData.get('name') !== ''){
        axios({
         url : URL,
         method : 'POST',
@@ -138,15 +143,25 @@ export default class Projects extends React.Component{
         },
         data : formData
     })
+    .then(response=>{
+        if (response.data === 'Student not found'){
+            alert("Invalid Student's ID. Please check the Students' Category")
+        }
+        else{
+            alert("Project created successfully")
+        }
+    })
     .then(() => {
         setTimeout(this.fetchProjects(), 10000)
-
     })
     .catch(error => {
         if (error.response) {
             console.log(error.responderEnd);
         }
     });
+    }else{
+        alert("Please fill in all the required fields (*)")
+    }
     }
     searchResult(){
         if (this.state.category == ''){
@@ -164,11 +179,12 @@ export default class Projects extends React.Component{
     render(){
         return(
             <div>
+                {this.state.isAuthenticated == 1 && 
                 <div className=" mt-2">
                     <Button variant="primary"  onClick={this.openModal}>
                         Add a project &nbsp;<i class='fas fa-plus'></i>
                     </Button>
-                </div>
+                </div>}
                 <form class="form-inline md-form form-sm active-cyan active-cyan-2 mt-3">
                     <i class="fas fa-search" aria-hidden="true"></i>
                     <input class="form-control form-control-sm ml-3" type="text" name="keyword" value={this.state.keyword} placeholder="Enter project's name"
@@ -230,10 +246,10 @@ export default class Projects extends React.Component{
                         <form class="form" encType="multipart/form-data">
                                 <div class="form-row"> {/* First row */}
                                     <div class="form-group col-md-6">
-                                        Name: <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
+                                        Name:<span style={{color: "red"}}>*</span> <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        Select a Course: <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>
+                                        Select a Course:<span style={{color: "red"}}>*</span> <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>
                                             <option value="">--Select Category--</option>
                                             {this.state.courses.map(c =>
                                                 <option value={c.id}>{c.id} - {c.name}</option>)}
@@ -242,7 +258,7 @@ export default class Projects extends React.Component{
                                 </div>
                             <div class="form-row"> {/* Second row */}
                                 <div class="form-group col-md-6">
-                                    Student's ID: <input class="form-control form-control-sm form-control form-control-sm" type="text" name="studentId" placeholder="Enter student's ID" value={this.state.student.id} onChange={this.handleNestedJSONChange.bind(this)} ></input><br />
+                                    Student's ID (Based on Students Category):<span style={{color: "red"}}>*</span> <input class="form-control form-control-sm form-control form-control-sm" type="text" name="studentId" placeholder="Enter student's ID" value={this.state.student.id} onChange={this.handleNestedJSONChange.bind(this)} ></input><br />
                                 </div>
                                 <div class="form-group col-md-6">
                                     Semester: <input class="form-control form-control-sm" type="text" name="semester" placeholder="Which semester?" value={this.state.semester} onChange={this.handleChange.bind(this)} ></input><br />

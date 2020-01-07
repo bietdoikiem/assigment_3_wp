@@ -87,6 +87,14 @@ router.post('/',upload.single('Student_Photo') , function(req,res){
 })
 
 router.delete('/:id', function(req, res){
+    Student.findOne({id: req.params.id}, function(err, student){
+        if(err){ handleError(err)}
+        else if(!student.Student_Photo) {
+            if(typeof student.Student_Photo !== 'undefined' && student.Student_Photo !== ''){
+                fs.unlinkSync('.'+student.Student_Photo);
+            }
+        }
+    })
     Student.deleteOne({id: req.params.id}, function(err, result){
         res.send(result)
     })

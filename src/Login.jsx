@@ -14,7 +14,7 @@ export default class Login extends React.Component{
     }
     login(){
         var user ={username: this.state.username, password: this.state.password}
-        fetch('http://localhost:5000/login',{
+        fetch('http://localhost:5000/admins/login',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,10 +26,13 @@ export default class Login extends React.Component{
         .then(data=>{
             if(data.result == 'authenticated'){
                 alert('Login successfully')
-                window.sessionStorage.setItem('authenticated', 1)
+                window.sessionStorage.setItem('isAuthenticated', 1)
+                this.props.history.push('/projects')
+                window.location.reload()
             }else{
                 alert('Wrong username or password')
-                window.sessionStorage.setItem('authenticated', 0)
+                window.sessionStorage.setItem('isAuthenticated', 0)
+                window.location.reload()
             }
         })
     }
