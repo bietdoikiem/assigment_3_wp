@@ -62,6 +62,7 @@ router.get('/:id',function(req,res){
 })
 
 router.post('/', upload.single('Course_Photo') , function(req,res){
+    if(req.file){
     if(req.body.id){
     var path = "/" + req.file.path.split("\\").join("/")
     console.log(req.file);
@@ -81,13 +82,22 @@ router.post('/', upload.single('Course_Photo') , function(req,res){
         res.send(course)
     })
     }
+    }else{
+        Course.create({
+            id: req.body.id.toUpperCase(),
+            name: req.body.name,
+        }, function(err, course){
+            res.send(course)
+        })
+    }
+
 })
 
 router.delete('/:id', function(req, res){
     Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
         if(err){ handleError(err)}
-        else if(!course.Course_Photo){
-            if(typeof course.Course_Photo !== 'undefined' && course.Course_Photo !== ''){
+        else if(course.Course_Photo){
+            if(typeof course.Course_Photo !== 'undefined' && course.Course_Photo !== '' && course.Course_Photo.indexOf("/uploads/projects/default_course") === -1){
                 fs.unlinkSync('.'+course.Course_Photo);
             }
         }

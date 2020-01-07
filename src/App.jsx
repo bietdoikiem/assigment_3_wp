@@ -8,6 +8,7 @@ import AddCourses from './Add_courses.jsx';
 import ProjectDetail from './ProjectDetail.jsx';
 import ProjectSearch from './ProjectSearch.jsx';
 import Login from './Login.jsx';
+import CreateAdmin from './CreateAdmin.jsx';
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom'
@@ -46,6 +47,7 @@ export default class App extends React.Component {
                 <Route path="/courses" component={Courses}/>
                 <Route path="/Add_courses" component={AddCourses}/>
                 <Route path="/login" component={Login}/>
+                <Route path="/cadmin" component={CreateAdmin}/>
               </Switch>
             </div>
           </div>

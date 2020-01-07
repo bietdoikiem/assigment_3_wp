@@ -42,9 +42,15 @@ export default class Navbar extends React.Component {
                     </ul>
                     <ul class="navbar-nav ml-auto">
                         {this.state.isAuthenticated == 1 &&
-                        <li class="nav-item active ">
-                            <Link class="nav-link " to="#" onClick={this.logout.bind(this)}>Sign out</Link>
-                        </li>} 
+                        <>
+                                <li class="nav-item active">
+                                    <Link class="nav-link " to="/cadmin">Create Admin</Link>
+                                </li>
+                                <li class="nav-item active">
+                                    <Link class="nav-link " to="#" onClick={this.logout.bind(this)}>Sign out</Link>
+                                </li>
+                        </>
+                        } 
                         {this.state.isAuthenticated == 0 &&<li class="nav-item active ">
                             <Link class="nav-link " to="/login">Sign in</Link>
                         </li> }
