@@ -5,7 +5,7 @@ mongoose.connect("mongodb://localhost:27017/mydb", { useNewUrlParser: true, useU
 var CourseSchema = new mongoose.Schema({
     id: String,
     name: String,
-    Course_Photo: {type: String, require: false, default: '/uploads/courses/default_course.jpg' }
+    Course_Photo: {type: String, require: false, default: '/uploads/courses/default_course.JPG' }
 })
 
 module.exports = mongoose.model('courses', CourseSchema);

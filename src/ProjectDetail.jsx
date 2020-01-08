@@ -266,7 +266,7 @@ export default class ProjectDetail extends React.Component {
                             {this.state.isAuthenticated == 1 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3><Button variant="primary ml-3 mb-2" onClick={this.openUpdateModal}>Edit <i class="fas fa-edit"></i></Button><Button variant="danger ml-2 mb-2" onClick={this.delete.bind(this)}>Delete <i class="far fa-trash-alt"></i></Button></div>}
                             {this.state.isAuthenticated == 0 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3></div>}
                                 <div>
-                                    {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} </small> : '' }
+                                    {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} - {this.state.project.student.year} </small> : '' }
                                 </div>
                             </div>
                             <div class="card mt-2" style={{height: "90%"}}>
@@ -300,9 +300,9 @@ export default class ProjectDetail extends React.Component {
                                     </div>
                                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">{this.state.project.scope}</div>
                                     {this.state.project.assignment ? <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                        <li>{this.state.project.assignment.name}</li>
-                                        <li>{this.state.project.assignment.description}</li>
-                                        <li>{this.state.project.assignment.percentage}</li>
+                                        <li>Name: {this.state.project.assignment.name}</li>
+                                        <li>Description: {this.state.project.assignment.description}</li>
+                                        <li>Percentage: {this.state.project.assignment.percentage}</li>
                                     </div> : '' }
                                 </div>
                             </div>

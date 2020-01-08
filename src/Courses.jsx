@@ -39,6 +39,9 @@ export default class Courses extends React.Component{
         })
         
       }
+      edit(id){
+        this.setState({id : id,})
+    }
     save(event){
         var url = 'http://13.59.166.121:5000/courses'
         event.preventDefault();
@@ -71,7 +74,7 @@ export default class Courses extends React.Component{
         
         var url ='http://13.59.166.121:5000/courses' +'/'+this.state.id
         this.setState({ modalIsOpen: false});
-        var method = 'POST'
+        var method = 'PUT'
         var formData = new FormData();
         var photo = document.querySelector('input[type="file"]');
         formData.append('name', this.state.name);
@@ -133,13 +136,13 @@ export default class Courses extends React.Component{
                     <div>
                         { this.state.grid_view === true ?
                             <div className="course" >
-                                <img  class="card-img-top" src={'http://localhost:5000'+s.Course_Photo} />
+                                <img  class="card-img-top" src={'http://13.59.166.121:5000'+s.Course_Photo} />
                                 <div class="card-body">
                                 <h5 class="card-title">{s.name}</h5>
                                 <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>
                                 <br/>
                                 <br/>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal">Update Courses</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id)}>Update Courses</button>
                                     
                                 </div>
                             </div>
@@ -164,7 +167,7 @@ export default class Courses extends React.Component{
                                 <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                 <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>
                                 <div className ='divider' />
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal">Update Courses</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id)}>Update Courses</button>
                             </div>
                             </div>
                             : null
@@ -183,11 +186,6 @@ export default class Courses extends React.Component{
                                     <h3 className="modal-title" id="exampleModalLongTitle">Update course</h3>
                                     </div>
                                     <div className="modal-body">
-                                        <div className="form-group">
-                                            <label for="course_id">Change code of this course</label>
-                                            <input type="text" class="form-control" name='id' id="course_id" placeholder='' value={this.state.id}
-                                            onChange={this.handleChange.bind(this)} />    
-                                        </div>
                                         <div className="form-group">
                                             <label for="Coursename">Courses name</label>
                                             <input type="Text" class="form-control" name='name' id="Coursename" placeholder='' 
