@@ -46,7 +46,7 @@ router.post('/login', function(req, res){
     })
 })
 
-router.post('/', verifyToken, function(req, res){
+router.post('/', function(req, res){
 
     Admin.find({}, function(err, admins){
         if(err) handleError(err)
