@@ -46,8 +46,9 @@ router.post('/login', function(req, res){
     })
 })
 
-router.post('/', function(req, res){
-
+router.post('/', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     Admin.find({}, function(err, admins){
         if(err) handleError(err)
         Admin.findOne({username: req.body.username}, function(err, admin){
@@ -72,7 +73,10 @@ router.post('/', function(req, res){
         }
         })
     })
-
+    }else{
+        res.send({"result": "not allowed"})
+    }
+    })
 })
 router.delete('/:id', function(req, res){
     Admin.deleteOne({id: req.params.id}, function(err, result){
