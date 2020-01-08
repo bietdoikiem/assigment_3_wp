@@ -164,7 +164,8 @@ export default class Projects extends React.Component{
         alert("Please fill in all the required fields (*)")
     }
     }
-    searchResult(){
+    searchResult(event){
+        event.preventDefault();
         if (this.state.category == ''){
         return this.props.history.push(`/search?k=${this.state.keyword}`)
         }
@@ -174,7 +175,6 @@ export default class Projects extends React.Component{
         else if (typeof this.state.category !== 'undefined' && this.state.category !== '' && typeof this.state.keyword !== 'undefined' && this.state.keyword !== ''){
             return this.props.history.push(`/search?k=${this.state.keyword}&cId=${this.state.category}`)
         }
-        console.log("haha")
     }
 
     render(){
@@ -196,7 +196,7 @@ export default class Projects extends React.Component{
                             {this.state.courses.map(c =>
                                 <option value={c.id}>{c.id} - {c.name}</option>)}
                     </select>
-                    <Button variant="primary ml-3 h-5" onClick={this.searchResult.bind(this)}>Search</Button>
+                    <Button type="submit" variant="primary ml-3 h-5" onClick={this.searchResult.bind(this)}>Search</Button>
                 </form>
                 {/* Card display */}
                 <br/>
