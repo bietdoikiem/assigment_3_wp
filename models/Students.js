@@ -97,8 +97,6 @@ router.post('/',upload.single('Student_Photo') , function(req,res){
 })
 
 router.delete('/:id', function(req, res){
-<<<<<<< HEAD
-=======
     Student.findOne({id: req.params.id}, function(err, student){
         if(err){ handleError(err)}
         else if(student.Student_Photo) {
@@ -107,7 +105,6 @@ router.delete('/:id', function(req, res){
             }
         }
     })
->>>>>>> 7b7cd99169d7c3ccc26bb1d7a37545f6dc8c0f76
     Student.deleteOne({id: req.params.id}, function(err, result){
         res.send(result)
     })

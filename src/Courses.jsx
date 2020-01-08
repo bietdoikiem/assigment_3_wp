@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Switch, Redirect, Route,Link} from 'react-router-dom'
 import Add_co from './Add_course.jsx'
+import axios from 'axios';
 
 
 export default class Courses extends React.Component{
@@ -17,7 +18,7 @@ export default class Courses extends React.Component{
         }
     }
     fetchData(){
-        var url = 'http://localhost:5000/courses'
+        var url = 'http://13.59.166.121:5000/courses'
         fetch(url)
             .then(res=>res.json())
             .then(json=>this.setState({courses: json}))
@@ -32,40 +33,78 @@ export default class Courses extends React.Component{
         obj[e.target.name] = e.target.value
         this.setState(obj)
     }
-    save(){
+    handleImageChange(event) {
+        this.setState({
+            Course_Photo: window.URL.createObjectURL(event.target.files[0])
+        })
         
-     var url ='http://localhost:5000/courses'
-     fetch(url,{
-         method:'POST',
-         headers: {
-             'Content-type': 'application/json',
-             'Accept' : 'application/json'
-         },
-         body: JSON.stringify({id:this.state.id, name: this.state.name  })
-     }).then(res => res.json())
-          .then(json=> this.fetchData())
-     }
-     Update(id){
-        
-        var url ='http://localhost:5000/courses'
-        fetch(url+ "/"+id,{
-            method:'PUT',
-            headers: {
-                'Content-type': 'application/json',
-                'Accept' : 'application/json'
-            },
-            body: JSON.stringify({id:this.state.id, name: this.state.name  })
-        }).then(res => res.json())
-             .then(json=> this.fetchData())
+      }
+    save(event){
+        var url = 'http://13.59.166.121:5000/courses'
+        event.preventDefault();
+        this.setState({ modalIsOpen: false});
+        var method = 'POST'
+        var formData = new FormData();
+        var photo = document.querySelector('input[type="file"]');
+        formData.append('id', this.state.id);
+        formData.append('name', this.state.name);
+        formData.append('Course_Photo', photo.files[0]);
+       axios({
+        url : url,
+        method : 'POST',
+        headers : {
+            "Content-Type" : "multipart/form-data"
+        },
+        data : formData
+    })
+    .then(() => {
+        setTimeout(this.fetchData(), 10000)
+
+    })
+    .catch(error => {
+        if (error.response) {
+            console.log(error.responderEnd);
         }
+    });
+    }
+    Update(){
+        
+        var url ='http://13.59.166.121:5000/courses' +'/'+this.state.id
+        this.setState({ modalIsOpen: false});
+        var method = 'POST'
+        var formData = new FormData();
+        var photo = document.querySelector('input[type="file"]');
+        formData.append('name', this.state.name);
+        formData.append('Course_Photo', photo.files[0]);
+       axios({
+        url : url,
+        method : 'PUT',
+        headers : {
+            "Content-Type" : "multipart/form-data"
+        },
+        data : formData
+    })
+    .then(() => {
+        setTimeout(this.fetchData(), 10000)
+
+    })
+    .catch(error => {
+        if (error.response) {
+            console.log(error.responderEnd);
+        }
+    });
+    }
     delete(id){
-        var url ='http://localhost:5000/courses'
+        var url ='http://13.59.166.121:5000/courses'
         if(window.confirm('Are you sure you want to delete this courses '))
         {
             fetch(url + "/"+id, {
                 method: 'delete',
             }).then(res=>res.json())
-            .then(json=>this.fetchData())
+            .then(() => {
+                setTimeout(this.fetchData(), 10000)
+        
+            })
         }
         }
     list_view(event){
@@ -76,7 +115,6 @@ export default class Courses extends React.Component{
         console.log('it worked')
     }
     render(){
-        let photo = 'localhost:5000'+this.state.Course_Photo
         const {grid_view} = this.state.grid_view
         return(
             <div>
@@ -109,34 +147,7 @@ export default class Courses extends React.Component{
                         }
                       
                         <br/>
-                        <div>
-                        {/*Modal for updating courses*/}
-                        <div className="modal fade" id="update_course_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
-                            <div className="modal-dialog modal-dialog-centered"  >
-                                <div className="modal-content">
-                                    <div className="modal-header">
-                                    <h3 className="modal-title" id="exampleModalLongTitle">Update course</h3>
-                                    </div>
-                                    <div className="modal-body">
-                                        <div className="form-group">
-                                            <label for="course_id">Change code of this course</label>
-                                            <input type="text" class="form-control" name='id' id="course_id" placeholder={s.id} value={this.state.id}
-                                            onChange={this.handleChange.bind(this)} />    
-                                        </div>
-                                        <div className="form-group">
-                                            <label for="Coursename">Courses name</label>
-                                            <input type="Text" class="form-control" name='name' id="Coursename" placeholder={s.name} 
-                                            value={this.state.name} onChange={this.handleChange.bind(this)} />
-                                        </div>
-                                    </div>
-                                    <div className ='modal-footer'>
-                                        <button type="submit" className="btn btn-primary" data-dismiss="modal" >Close</button>
-                                        <Link to='/courses'><button type='button' className='btn btn-sm btn-outline-success' onClick={this.Update.bind(this,s.id)} data-dismiss="modal">Save</button></Link>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
+
                         
                     </div>
                )}
@@ -147,7 +158,7 @@ export default class Courses extends React.Component{
                         { this.state.grid_view === false ?
                             <div className="card" >
                             <div className="card-body">
-                            <img src={'http://localhost:5000'+s.Course_Photo} class="rounded float-left"/>
+                            <img src={'http://13.59.166.121:5000'+s.Course_Photo} class="rounded float-left"/>
                                 <h5 className="card-title">{s.name}</h5>
                                 <h6 className="card-subtitle mb-2 text-muted">{s.id}</h6>
                                 <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
@@ -160,7 +171,10 @@ export default class Courses extends React.Component{
                         }
                       
                         <br/>
-                        <div>
+                        
+                    </div>
+               )}
+                <div>
                         {/*Modal for updating courses*/}
                         <div className="modal fade" id="update_course_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
                             <div className="modal-dialog modal-dialog-centered"  >
@@ -171,26 +185,24 @@ export default class Courses extends React.Component{
                                     <div className="modal-body">
                                         <div className="form-group">
                                             <label for="course_id">Change code of this course</label>
-                                            <input type="text" class="form-control" name='id' id="course_id" placeholder={s.id} value={this.state.id}
+                                            <input type="text" class="form-control" name='id' id="course_id" placeholder='' value={this.state.id}
                                             onChange={this.handleChange.bind(this)} />    
                                         </div>
                                         <div className="form-group">
                                             <label for="Coursename">Courses name</label>
-                                            <input type="Text" class="form-control" name='name' id="Coursename" placeholder={s.name} 
+                                            <input type="Text" class="form-control" name='name' id="Coursename" placeholder='' 
                                             value={this.state.name} onChange={this.handleChange.bind(this)} />
                                         </div>
+                                        <input className="form-control-file form-control-sm" type="file" onChange={this.handleImageChange.bind(this)}></input> <img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> <br />
                                     </div>
                                     <div className ='modal-footer'>
                                         <button type="submit" className="btn btn-primary" data-dismiss="modal" >Close</button>
-                                        <Link to='/courses'><button type='button' className='btn btn-sm btn-outline-success' onClick={this.Update.bind(this,s.id)} data-dismiss="modal">Save</button></Link>
+                                        <Link to='/courses'><button type='button' className='btn btn-sm btn-outline-success' onClick={this.Update.bind(this)} data-dismiss="modal">Save</button></Link>
                                     </div>
                                 </div>
                                 </div>
                             </div>
                         </div>
-                        
-                    </div>
-               )}
                <div>
                         {/*Modal for adding courses*/}
                         <div class="modal fade" id="add_course_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
@@ -210,6 +222,7 @@ export default class Courses extends React.Component{
                                             <input type="Text" class="form-control" name='name' id="Coursename" placeholder="Type your coursename" 
                                             value={this.state.name} onChange={this.handleChange.bind(this)} />
                                         </div>
+                                        <input className="form-control-file form-control-sm" type="file" onChange={this.handleImageChange.bind(this)}></input> <img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> <br />
                                     </div>
                                     <div class ='modal-footer'>
                                         <button type="submit" class="btn btn-primary" data-dismiss="modal" >Close</button>

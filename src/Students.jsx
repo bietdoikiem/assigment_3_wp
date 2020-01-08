@@ -20,7 +20,7 @@ export default class Students extends React.Component{
         }
     }
     fetchData(){
-        var url = 'http://localhost:5000/students'
+        var url = 'http://13.59.166.121:5000/students'
         fetch(url)
             .then(res=>res.json())
             .then(json=>this.setState({students: json}))
@@ -42,7 +42,7 @@ export default class Students extends React.Component{
         
       }
       save(event){
-        var url = 'http://localhost:5000/students'
+        var url = 'http://13.59.166.121:5000/students'
         event.preventDefault();
         this.setState({ modalIsOpen: false});
         var method = 'POST'
@@ -70,9 +70,9 @@ export default class Students extends React.Component{
         }
     });
     }
-     Update(id){
+     Update(){
         
-        var url =`http://localhost:5000/students/${this.props.match.params.id}`
+        var url ='http://13.59.166.121:5000/students' +'/'+this.state.id
         this.setState({ modalIsOpen: false});
         var method = 'POST'
         var formData = new FormData();
@@ -89,7 +89,7 @@ export default class Students extends React.Component{
         data : formData
     })
     .then(() => {
-        setTimeout(this.fetchUpdate(), 10000)
+        setTimeout(this.fetchData(), 10000)
 
     })
     .catch(error => {
@@ -99,7 +99,7 @@ export default class Students extends React.Component{
     });
     }
     delete(id){
-        var url ='http://localhost:5000/students'
+        var url ='http://13.59.166.121:5000/students'
         if(window.confirm('Are you sure you want to delete this courses '))
         {
             fetch(url + "/"+id, {
@@ -108,6 +108,9 @@ export default class Students extends React.Component{
             .then(json=>this.fetchData())
         }
         }
+    edit(id){
+        this.setState({id : id})
+    }
     list_view(event){
         this.setState({grid_view:false})
     }
@@ -116,6 +119,7 @@ export default class Students extends React.Component{
         console.log('it worked')
     }
     render(){
+        let students = this.state.students
         return(
             <div>
                 <BrowserRouter>
@@ -126,21 +130,25 @@ export default class Students extends React.Component{
                         <br/>
                <div>
                 {/*the form for displaying student list*/}
-                {this.state.students.map(s=>
+                
+                {students.map(s=>
                     <div>
                             <div className="card" >
                             <div className="card-body">
-                            <img src={'http://localhost:5000'+s.Student_Photo} class="rounded-circle float-left"/>
+                            <img src={'http://13.59.166.121:5000'+s.Student_Photo} class="rounded-circle float-left"/>
                                 <h5 className="card-title">{s.name}</h5>
                                 <h6 className="card-subtitle mb-2 text-muted">{s.id}</h6>
                                 <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                 <button type='button' className='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>
                                 <div className ='divider' />
-                                <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#update_student_modal">Update Student</button>
+                                <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#update_student_modal" onClick={this.edit.bind(this,s.id)} >Update Student</button>
                             </div>
                             </div>
-                        {/*Modal for updating students*/}
-                        <div className="modal fade" id="update_student_modal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
+
+                        </div>                
+               )}
+                                       {/*Modal for updating students*/}
+                                       <div className="modal fade" id="update_student_modal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
                             <div className="modal-dialog modal-dialog-centered"  >
                                 <div className="modal-content">
                                     <div className="modal-header">
@@ -161,13 +169,11 @@ export default class Students extends React.Component{
                                     </div>
                                     <div class ='modal-footer'>
                                         <button type="submit" className="btn btn-primary" data-dismiss="modal" >Close</button>
-                                        <button type='button' className='btn btn-sm btn-outline-success' onClick={this.Update.bind(this,s.id)} data-dismiss="modal">Save</button>
+                                        <button type='button' className='btn btn-sm btn-outline-success' onClick={this.Update.bind(this)} data-dismiss="modal">Save</button>
                                     </div>
                                 </div>
                                 </div>
                             </div>
-                        </div>                
-               )}
                <div>
                         {/*Modal for adding students*/}
                         <div className="modal fade" id="add_student_modal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
