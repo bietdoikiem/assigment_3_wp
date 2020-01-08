@@ -218,6 +218,7 @@ export default class ProjectDetail extends React.Component {
             fetch(URL, {
                 method: 'delete'
             }) .then(res=>res.json())
+            .then(alert("Project deleted successfully"))
             .then(this.props.history.push('/projects'))
         }
     }

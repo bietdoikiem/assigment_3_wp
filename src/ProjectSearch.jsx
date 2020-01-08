@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import ReadMoreAndLess from 'react-read-more-less';
 
 
-const URL = "http://localhost:5000/projects"
+const URL = "http://13.59.166.121:5000/projects"
 
 
 
@@ -112,7 +112,7 @@ export default class ProjectSearch extends React.Component{
                     <div>
                         <div className="zoom">
                             <div class="card mb-3">
-                                <img src={`http://localhost:5000${p.Thumbnail}`} height="200" width="1100" class="card-img-top" alt="Thumbnail" style={{ objectFit: "cover", height: "350px" }} />
+                                <img src={`http://13.59.166.121:5000${p.Thumbnail}`} height="200" width="1100" class="card-img-top" alt="Thumbnail" style={{ objectFit: "cover", height: "350px" }} />
                                 <div class="card-body">
                                     <h5 class="card-title">{p.name}</h5>
                                     <ReadMoreAndLess
