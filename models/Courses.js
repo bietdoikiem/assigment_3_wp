@@ -77,6 +77,7 @@ router.post('/', upload.single('Course_Photo') , function(req,res){
     Course.create({
         id: req.body.id.toUpperCase(),
         name: req.body.name,
+        description: req.body.description,
         Course_Photo: path.replace(req.file.filename, '262x146-' + req.file.filename)
     }, function(err, course){
         res.send(course)
@@ -86,6 +87,7 @@ router.post('/', upload.single('Course_Photo') , function(req,res){
         Course.create({
             id: req.body.id.toUpperCase(),
             name: req.body.name,
+            description: req.body.description,
         }, function(err, course){
             res.send(course)
         })
@@ -125,6 +127,7 @@ router.put('/:id', upload.single('Course_Photo') , function(req, res){
         console.log(path)
     Course.findOneAndUpdate({id: req.params.id.toUpperCase()},{
         name: req.body.name,
+        description: req.body.description,
         Course_Photo: path.replace(req.file.filename, '262x146-' + req.file.filename)
     }, 
         function(err, result){
@@ -133,7 +136,8 @@ router.put('/:id', upload.single('Course_Photo') , function(req, res){
     }
     else{
         Course.findOneAndUpdate({id: req.params.id.toUpperCase()},{
-            name: req.body.name
+            name: req.body.name,
+            description: req.body.description,
         }, 
             function(err, result){
             res.send(result)
