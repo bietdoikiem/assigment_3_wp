@@ -30,6 +30,7 @@ export default class Login extends React.Component{
             if(data.result === 'authenticated'){
                 alert('Login successfully')
                 window.sessionStorage.setItem('isAuthenticated', 1)
+                window.sessionStorage.setItem('token', data.token)
                 this.props.history.push('/projects')
                 window.location.reload()
             }else{

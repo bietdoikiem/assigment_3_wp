@@ -3,6 +3,7 @@ var router = express.Router()
 var sharp = require('sharp')
 var fs = require('fs')
 var multer = require('multer');
+var jwt= require('jsonwebtoken')
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -63,7 +64,9 @@ router.get('/:id',function(req,res){
     })
 })
 
-router.post('/',upload.single('Student_Photo') , function(req,res){
+router.post('/', verifyToken,upload.single('Student_Photo') , function(req,res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     if(req.file){
     if(req.body.id){
     var path = "/" + req.file.path.split("\\").join("/")
@@ -93,10 +96,16 @@ router.post('/',upload.single('Student_Photo') , function(req,res){
     }, function(err, student){
         res.send(student)
     })
-}
+    }
+    }else{
+        res.json({'result': 'not allowed'})
+    }
+    })
 })
 
-router.delete('/:id', function(req, res){
+router.delete('/:id', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     Student.findOne({id: req.params.id}, function(err, student){
         if(err){ handleError(err)}
         else if(student.Student_Photo) {
@@ -108,10 +117,16 @@ router.delete('/:id', function(req, res){
     Student.deleteOne({id: req.params.id}, function(err, result){
         res.send(result)
     })
+    } else{
+        res.json({'result': 'not allowed'})
+    }
+    })
 })
 
 
-router.put('/:id', upload.single('Student_Photo') , function(req, res){
+router.put('/:id', verifyToken, upload.single('Student_Photo') , function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     if(req.file){
         Student.findOne({id: req.params.id}, function(err, student){
             if(err) handleError(err)
@@ -146,6 +161,10 @@ router.put('/:id', upload.single('Student_Photo') , function(req, res){
         })
 
     }
+    }else{
+        res.json({'result': 'not allowed'})
+    }
+    })
  }) 
  
 
@@ -172,6 +191,24 @@ router.get('/all/filter', function (req, res) {
 function handleError(err){
     console.log(err)
  }
+ function verifyToken(req, res, next){
+    //Get auth header value
+    const bearerHeader = req.headers['authorization'];
+    // Check if bearer is undefined
+    if(typeof bearerHeader !== 'undefined'){
+        // Split at the space
+        const bearer = bearerHeader.split(' ');
+        // Get token from array
+        const bearerToken = bearer[1]
+        // Set the token
+        req.token = bearerToken
+        // Next middleware
+        next();
+    } else {
+        //forbidden
+        res.json({'result': 'not allowed'})
+    }
+}
  
 
 module.exports = router;
