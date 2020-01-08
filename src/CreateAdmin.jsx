@@ -30,7 +30,7 @@ export default class CreateAdmin extends React.Component{
     create(event){
         event.preventDefault();
         var user ={username: this.state.username, password: this.state.password}
-        fetch('http://localhost:5000/admins/',{
+        fetch('http://13.59.166.121:5000/admins/',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export default class CreateAdmin extends React.Component{
         })
     }
     fetchAdmins(){
-        fetch('http://localhost:5000/admins/')
+        fetch('http://13.59.166.121:5000/admins/')
         .then(res=>res.json())
         .then(json=>this.setState({admins: json}))
     }

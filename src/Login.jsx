@@ -17,7 +17,7 @@ export default class Login extends React.Component{
     login(event){
         event.preventDefault();
         var user ={username: this.state.username, password: this.state.password}
-        fetch('http://localhost:5000/admins/login',{
+        fetch('http://13.59.166.121:5000/admins/login',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
