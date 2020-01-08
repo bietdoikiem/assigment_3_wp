@@ -114,13 +114,13 @@ export default class ProjectDetail extends React.Component {
         });
     }
     fetchProject() {
-        var URL = `http://localhost:5000/projects/${this.props.match.params.id}`
+        var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}`
         fetch(URL)
             .then(res => res.json())
             .then(json =>this.setState({ project: json }))
     }
     fetchCourses() {
-        var URL_Course = "http://localhost:5000/courses"
+        var URL_Course = "http://13.59.166.121:5000/courses"
         fetch(URL_Course)
             .then(res => res.json())
             .then(json =>this.setState({ courses: json }))
@@ -128,7 +128,7 @@ export default class ProjectDetail extends React.Component {
 
 
     save(event){
-        var URL = `http://localhost:5000/projects/${this.props.match.params.id}`
+        var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}`
         event.preventDefault();
         this.setState({ modalIsOpenUpdate: false});
         var method = 'PUT'
@@ -157,7 +157,7 @@ export default class ProjectDetail extends React.Component {
     }
 
     saveImage(event){
-        var URL = `http://localhost:5000/projects/${this.props.match.params.id}/photos`
+        var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}/photos`
         event.preventDefault();
         this.setState({ modalIsOpen: false});
         var method = 'PUT'
@@ -186,7 +186,7 @@ export default class ProjectDetail extends React.Component {
     window.location.reload(false); 
     }
     saveVideo(event){
-        var URL = `http://localhost:5000/projects/${this.props.match.params.id}/videos`
+        var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}/videos`
         event.preventDefault();
         this.setState({ modalIsOpenVideo: false});
         var method = 'PUT'
@@ -213,7 +213,7 @@ export default class ProjectDetail extends React.Component {
     });
     }
     delete(){
-        var URL = `http://localhost:5000/projects/${this.props.match.params.id}`
+        var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}`
         if(window.confirm('Do you want to delete?')){
             fetch(URL, {
                 method: 'delete'
@@ -248,14 +248,14 @@ export default class ProjectDetail extends React.Component {
                             <br/>
                             <br/>
                             <Carousel autoPlay>
-                                {this.state.project.Photo?.map(p => <div><img src={`http://localhost:5000${p}`} /></div>)}
+                                {this.state.project.Photo?.map(p => <div><img src={`http://13.59.166.121:5000${p}`} /></div>)}
                             </Carousel>
                             <h3 class="mt-1" style={{color: "#252525"}}>Project Videos</h3> 
                             {this.state.isAuthenticated == 1 &&
                             <Button variant="primary mt-2" onClick={this.openVideoModal}>Add video  <i class="fas fa-plus fa-xs"></i> <i class="fa fa-video-camera" aria-hidden="true"></i></Button>}
                             {this.state.project.Video ? this.state.project.Video.map(url=>
                                 <div class="showVideo mt-2">
-                                    <video src={`http://localhost:5000${url}`} width="510" height="286" preload="metadata" controls />
+                                    <video src={`http://13.59.166.121:5000${url}`} width="510" height="286" preload="metadata" controls />
                                 </div>) : '' }
 
                         </div>
