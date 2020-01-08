@@ -1,0 +1,1 @@
+this folder contains projects' images

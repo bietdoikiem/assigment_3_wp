@@ -64,6 +64,7 @@ router.get('/:id',function(req,res){
 })
 
 router.post('/',upload.single('Student_Photo') , function(req,res){
+    if(req.file){
     if(req.body.id){
     var path = "/" + req.file.path.split("\\").join("/")
     console.log(req.file);
@@ -84,9 +85,29 @@ router.post('/',upload.single('Student_Photo') , function(req,res){
         res.send(student)
     })
 }
+}else{
+    Student.create({
+        id: req.body.id,
+        name: req.body.name,
+        year: req.body.year,
+    }, function(err, student){
+        res.send(student)
+    })
+}
 })
 
 router.delete('/:id', function(req, res){
+<<<<<<< HEAD
+=======
+    Student.findOne({id: req.params.id}, function(err, student){
+        if(err){ handleError(err)}
+        else if(student.Student_Photo) {
+            if(typeof student.Student_Photo !== 'undefined' && student.Student_Photo !== '' && student.Student_Photo.indexOf('/uploads/students/default_student') === -1){
+                fs.unlinkSync('.'+student.Student_Photo);
+            }
+        }
+    })
+>>>>>>> 7b7cd99169d7c3ccc26bb1d7a37545f6dc8c0f76
     Student.deleteOne({id: req.params.id}, function(err, result){
         res.send(result)
     })

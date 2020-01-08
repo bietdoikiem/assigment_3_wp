@@ -72,7 +72,7 @@ export default class Students extends React.Component{
     }
      Update(id){
         
-        var url ='http://localhost:5000/students/'
+        var url =`http://localhost:5000/students/${this.props.match.params.id}`
         this.setState({ modalIsOpen: false});
         var method = 'POST'
         var formData = new FormData();

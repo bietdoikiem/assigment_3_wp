@@ -134,7 +134,8 @@ export default class Projects extends React.Component{
         formData.append('industry', this.state.industry);
         formData.append('application', this.state.application);
         formData.append('Thumbnail', photo.files[0]);
-    if (formData.get('studentId') !== '' && formData.get('courseId') !== '' && formData.get('name') !== ''){
+    if (formData.get('studentId') !== '' && formData.get('courseId') !== '' && formData.get('name') !== '' && formData.get('Thumbnail') !== null && formData.get('Thumbnail') !== 'undefined'){
+        console.log(formData.get('Thumbnail'))
        axios({
         url : URL,
         method : 'POST',
@@ -242,11 +243,11 @@ export default class Projects extends React.Component{
                     <Modal.Header closeButton>
                         <Modal.Title><span style={{color: "#007bff"}}>Add a project</span></Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
+                    <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
                         <form class="form" encType="multipart/form-data">
                                 <div class="form-row"> {/* First row */}
                                     <div class="form-group col-md-6">
-                                        Name:<span style={{color: "red"}}>*</span> <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
+                                        Project's Name:<span style={{color: "red"}}>*</span> <input class="form-control form-control-sm" type="text" name="name" placeholder="Enter project's name" value={this.state.name} onChange={this.handleChange.bind(this)} ></input><br/>
                                     </div>
                                     <div class="form-group col-md-6">
                                         Select a Course:<span style={{color: "red"}}>*</span> <select class="form-control form-control-sm" onChange={this.handleCategoryChange.bind(this)} value={this.state.course.id}>
@@ -280,7 +281,7 @@ export default class Projects extends React.Component{
                                 Scope: <input class="form-control form-control-sm" type="text" name="scope" placeholder="Enter scopes" value={this.state.scope} onChange={this.handleChange.bind(this)} ></input><br />
                                 Industry (optional): <input class="form-control form-control-sm" type="text" name="industry" placeholder="Enter industry" value={this.state.industry} onChange={this.handleChange.bind(this)} ></input><br />
                                 Application (optional): <input class="form-control form-control-sm" type="text" name="application" placeholder="What is it application ?" value={this.state.application} onChange={this.handleChange.bind(this)} ></input><br />
-                                Thumbnail Image: <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br /> 
+                                Thumbnail Image:<span style={{color: "red"}}>*</span> <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br /> 
                                 Project's Description: <textarea class="form-control" rows="4" cols="50" name="description" placeholder="Anything to describe your work" value={this.state.description} onChange={this.handleChange.bind(this)} />
                             </div>
                         </form>

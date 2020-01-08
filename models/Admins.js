@@ -55,9 +55,15 @@ router.post('/', function(req, res){
                 res.send(admin)
             })
         }else{
-            res.send("username taken")
+            res.send({"result":"username taken"})
         }
         })
+    })
+})
+router.delete('/:id', function(req, res){
+    Admin.deleteOne({id: req.params.id}, function(err, result){
+        if(err) handleError(err)
+        res.send(result)
     })
 })
 
