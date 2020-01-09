@@ -15,8 +15,12 @@ export default class Courses extends React.Component{
             Course_Photo:'',
             description: '',
             grid_view:false,
+            keyword:'',
             isAuthenticated: 0,
             token: '',
+            norm:true,
+            code:true,
+            fname:false
         }
     }
     fetchData(){
@@ -124,12 +128,68 @@ export default class Courses extends React.Component{
             })
         }
         }
+        normal_filter(){
+            this.setState({
+                norm:true,
+                fname:false,
+                code:false
+            })
+        }
+        code_filter(){
+            this.setState({
+                norm:false,
+                fname:false,
+                code:true
+            })
+        }
+        handle_filter(e){
+            e.preventDefault();
+            var obj = {}
+            obj[e.target.name] = true
+            this.setState(obj)
+            if (e.target.name == 'norm' ){
+                this.setState({fname:false,
+                code:false})
+            } else if (e.target.name == 'code' ){
+                this.setState({fname:false,
+                norm:false})
+            } else if (e.target.name == 'fname' ){
+                this.setState({norm:false,
+                code:false})
+            }
+            console.log(this.state.code)
+            console.log(this.state.norm)
+            console.log(this.state.fname)
+        }
     list_view(event){
         this.setState({grid_view:false})
     }
     grid_view(event){
         this.setState({grid_view:true})
         console.log('it worked')
+    }
+    HandleSearch(e){
+        this.setstate({keyword:e.target.value})
+    }
+    Searchresult(e){
+        var url = 'http://13.59.166.121:5000/courses'
+        e.preventDefault();
+        this.state.keyword = this.state.keyword.toLowerCase();
+        this.setState({keyword: this.state.keyword});
+        var list=[];
+        fetch(url)
+        .then(res => res.json())
+        .then(json=>{
+            var filter_list = [];
+            if (this.state.norm == true && this.state.keyword != ''){
+                console.log(json)
+                 list = json.filter(s => s.name.toString().toLowerCase().includes(this.state.keyword.toString().toLowerCase() ),
+                this.setState({courses:list}),)                
+            } else if(this.state.code === true && this.state.keyword !==""){
+                list = json.filter(s => s.id.toString().toLowerCase().includes(this.state.keyword.toString().toLowerCase()))
+            }
+            this.setState({courses:list})
+        })
     }
     render(){
         const {grid_view} = this.state.grid_view
@@ -142,11 +202,24 @@ export default class Courses extends React.Component{
                             <br/>
                             <br/>
                             {this.state.isAuthenticated == 1 && <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_course_modal" ><i class="fas fa-plus"></i> Add courses</button>}
+                            <form class="form-inline md-form form-sm active-cyan active-cyan-2 mt-3">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input class="form-control form-control-sm ml-3" type="text" name="keyword" value={this.state.keyword} placeholder="Enter course name"
+                        aria-label="Search" onChange={this.handleChange.bind(this)} />
+                    <i class="fa fa-list-alt ml-3" aria-hidden="true"></i>
+                    <div class='divider' />
+                    <div class='divider' />
+                   
+                    <div class='divider' />
+                    <button class='btn btn-primary' type ='submit' onClick ={this.Searchresult.bind(this)} >Submit</button>
+
+                   
+                </form>
                         </div>
                         
                 <div className='grid-container'>
-                {/*the form for displaying courses info as grid*/}
-                {this.state.courses.map(s=>
+                {/*the form for displaying courses info as grid */}
+                { this.state.courses?.map(s=>
                     <div>
                         { this.state.grid_view === true ?
                             <div className="course" >
@@ -171,7 +244,7 @@ export default class Courses extends React.Component{
                )}
                </div>
                 {/*the form for displaying courses list*/}
-                {this.state.courses.map(s=>
+                {this.state.courses?.map(s=>
                     <div>
                         { this.state.grid_view === false ?
                             <div className="card" >

@@ -18,6 +18,10 @@ export default class Students extends React.Component {
             grid_view: false,
             isAuthenticated: 0,
             token: '',
+            norm:true,
+            code:true,
+            fname:false,
+            keyword:''
         }
     }
     fetchData() {
@@ -129,6 +133,26 @@ export default class Students extends React.Component {
         this.setState({ grid_view: true })
         console.log('it worked')
     }
+    Searchresult(e){
+        var url = 'http://13.59.166.121:5000/students'
+        e.preventDefault();
+        this.state.keyword = this.state.keyword.toLowerCase();
+        this.setState({keyword: this.state.keyword});
+        var list=[];
+        fetch(url)
+        .then(res => res.json())
+        .then(json=>{
+            var filter_list = [];
+            if (this.state.norm == true && this.state.keyword != ''){
+                console.log(json)
+                 list = json.filter(s => s.name.toString().toLowerCase().includes(this.state.keyword.toString().toLowerCase() ),
+                this.setState({courses:list}),)                
+            } else if(this.state.code === true && this.state.keyword !==""){
+                list = json.filter(s => s.id.toString().toLowerCase().includes(this.state.keyword.toString().toLowerCase()))
+            }
+            this.setState({students:list})
+        })
+    }
     render() {
         let students = this.state.students
         return (
@@ -136,6 +160,20 @@ export default class Students extends React.Component {
                 <BrowserRouter>
                     <div id="btnContainer">
                     {this.state.isAuthenticated == 1 && <button type="button" className="btn btn-primary btn-primary-edit" data-toggle="modal" data-target="#add_student_modal" ><i className="fas fa-plus"></i> Add students</button>}
+                    <form class="form-inline md-form form-sm active-cyan active-cyan-2 mt-3">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input class="form-control form-control-sm ml-3" type="text" name="keyword" value={this.state.keyword} placeholder="Enter course name"
+                        aria-label="Search" onChange={this.handleChange.bind(this)} />
+                    <i class="fa fa-list-alt ml-3" aria-hidden="true"></i>
+                    <div class='divider' />
+                    <div class='divider' />
+                   
+                    <div class='divider' />
+                    <button class='btn btn-primary' type ='submit' onClick ={this.Searchresult.bind(this)} >Submit</button>
+
+                   
+                </form>
+
                     </div>
 
                     <div>
