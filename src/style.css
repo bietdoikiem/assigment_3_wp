@@ -28,6 +28,7 @@ footer {
 
 #page-container {
     position: relative;
+    margin-top:10px;
     min-height: 100vh;
   }
   #content-wrap {
@@ -40,6 +41,7 @@ footer {
 }
 #header {
     position: fixed;
+   
 }
 
 #button_home {
@@ -185,6 +187,7 @@ footer {
 }
 .float-left{
     margin-right: 20px;
+    margin-bottom: auto;
 }
 
 
@@ -231,4 +234,58 @@ div.card {
 }
 .active-cyan-2 input[type=text]{
     width: 40% !important;
+}
+.avatar {
+    vertical-align: middle;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top: 25px;
+    margin-right: 25px !important;
+  }
+  .media{
+      margin-top: 0px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 5px 5px 4px  rgb(221, 221, 230);
+      background-color: rgb(236, 243, 242);
+  }
+
+  .move-avatar{
+      margin-left: 2% !important;
+  }
+
+  .btn-primary-edit{
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    margin-top: 10px !important;
+  }
+
+.btn-primary-save{
+    background-color: #28a745 !important;
+    color: #fff !important;
+    border-color: #28a745 !important;
+  }
+.h5-edit{
+    font-weight: bolder;
+}
+
+.move-listbtn{
+    margin-right: 0.5%;
+}
+
+.move-media{
+    margin-top: 1%;
+    padding-bottom: 1%;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
 }

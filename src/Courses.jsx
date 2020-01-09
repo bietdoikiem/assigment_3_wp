@@ -13,6 +13,7 @@ export default class Courses extends React.Component{
             id: '',
             name: '',
             Course_Photo:'',
+            description: '',
             grid_view:false
  
         }
@@ -39,8 +40,8 @@ export default class Courses extends React.Component{
         })
         
       }
-      edit(id){
-        this.setState({id : id,})
+      edit(id,name,description){
+        this.setState({id : id, name: name,description: description})
     }
     save(event){
         var url = 'http://13.59.166.121:5000/courses'
@@ -52,6 +53,7 @@ export default class Courses extends React.Component{
         formData.append('id', this.state.id);
         formData.append('name', this.state.name);
         formData.append('Course_Photo', photo.files[0]);
+        formData.append('description',this.state.description );
        axios({
         url : url,
         method : 'POST',
@@ -61,6 +63,7 @@ export default class Courses extends React.Component{
         data : formData
     })
     .then(() => {
+        alert('create student successfully')
         setTimeout(this.fetchData(), 10000)
 
     })
@@ -79,6 +82,7 @@ export default class Courses extends React.Component{
         var photo = document.querySelector('input[type="file"]');
         formData.append('name', this.state.name);
         formData.append('Course_Photo', photo.files[0]);
+        formData.append('description',this.state.description );
        axios({
         url : url,
         method : 'PUT',
@@ -88,6 +92,7 @@ export default class Courses extends React.Component{
         data : formData
     })
     .then(() => {
+        alert('create student successfully')
         setTimeout(this.fetchData(), 10000)
 
     })
@@ -123,13 +128,13 @@ export default class Courses extends React.Component{
             <div>
                 <BrowserRouter>
                         <div id="btnContainer">
-                            <button class="btn active" onClick= {this.list_view.bind(this)} ><i class="fa fa-bars"></i> List</button> 
+                            <button class="btn active move-listbtn" onClick= {this.list_view.bind(this)} ><i class="fa fa-bars"></i> List</button> 
                             <button class="btn active" onClick={this.grid_view.bind(this)} ><i class="fa fa-th-large"></i> Grid</button>
                             <br/>
                             <br/>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_course_modal" ><i class="fa fa-th-large"></i> Add courses</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_course_modal" ><i class="fas fa-plus"></i> Add courses</button>
                         </div>
-                        <br></br>
+                        
                 <div className='grid-container'>
                 {/*the form for displaying courses info as grid*/}
                 {this.state.courses.map(s=>
@@ -139,10 +144,11 @@ export default class Courses extends React.Component{
                                 <img  class="card-img-top" src={'http://13.59.166.121:5000'+s.Course_Photo} />
                                 <div class="card-body">
                                 <h5 class="card-title">{s.name}</h5>
+                                <h5 class="card-title">{s.description}</h5>
                                 <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>
                                 <br/>
                                 <br/>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id)}>Update Courses</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id,s.name,s.description)}>Update Courses</button>
                                     
                                 </div>
                             </div>
@@ -164,10 +170,11 @@ export default class Courses extends React.Component{
                             <img src={'http://13.59.166.121:5000'+s.Course_Photo} class="rounded float-left"/>
                                 <h5 className="card-title">{s.name}</h5>
                                 <h6 className="card-subtitle mb-2 text-muted">{s.id}</h6>
+                                <h5 class="card-title">{s.description}</h5>
                                 <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                 <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>
                                 <div className ='divider' />
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id)}>Update Courses</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id,s.name,s.description)}>Update Courses</button>
                             </div>
                             </div>
                             : null
@@ -191,11 +198,16 @@ export default class Courses extends React.Component{
                                             <input type="Text" class="form-control" name='name' id="Coursename" placeholder='' 
                                             value={this.state.name} onChange={this.handleChange.bind(this)} />
                                         </div>
+                                        <div className="form-group">
+                                            <label for="CourseDe">Courses description</label>
+                                            <input type="Text" class="form-control" name='description' id="CourseDe" placeholder='' 
+                                            value={this.state.description} onChange={this.handleChange.bind(this)} />
+                                        </div>
                                         <input className="form-control-file form-control-sm" type="file" onChange={this.handleImageChange.bind(this)}></input> <img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> <br />
                                     </div>
                                     <div className ='modal-footer'>
-                                        <button type="submit" className="btn btn-primary" data-dismiss="modal" >Close</button>
-                                        <Link to='/courses'><button type='button' className='btn btn-sm btn-outline-success' onClick={this.Update.bind(this)} data-dismiss="modal">Save</button></Link>
+                                        <button type="submit" className="btn btn-secondary" data-dismiss="modal" >Close</button>
+                                        <Link to='/courses'><button type='button' className='btn btn-danger' onClick={this.Update.bind(this)} data-dismiss="modal">Save</button></Link>
                                     </div>
                                 </div>
                                 </div>
@@ -223,8 +235,8 @@ export default class Courses extends React.Component{
                                         <input className="form-control-file form-control-sm" type="file" onChange={this.handleImageChange.bind(this)}></input> <img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> <br />
                                     </div>
                                     <div class ='modal-footer'>
-                                        <button type="submit" class="btn btn-primary" data-dismiss="modal" >Close</button>
-                                        <Link to='/courses'><button type='button' className='btn btn-sm btn-outline-success' onClick={this.save.bind(this)} data-dismiss="modal">Save</button></Link>
+                                        <button type="submit" class="btn btn-secondary" data-dismiss="modal" >Close</button>
+                                        <Link to='/courses'><button type='button' className='btn btn-danger' onClick={this.save.bind(this)} data-dismiss="modal">Save</button></Link>
                                     </div>
                                 </div>
                                 </div>

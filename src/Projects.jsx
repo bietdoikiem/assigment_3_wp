@@ -290,7 +290,7 @@ export default class Projects extends React.Component{
                         <Button variant="secondary" onClick={this.closeModal}>
                             Close
                         </Button>
-                        <Button type="submit" variant="primary" onClick={this.save.bind(this)}>
+                        <Button type="submit" variant="danger" onClick={this.save.bind(this)}>
                             Add project
                         </Button>
                     </Modal.Footer>

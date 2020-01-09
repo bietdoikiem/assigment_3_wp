@@ -16,7 +16,7 @@ export default class Footer extends React.Component {
                             <div class="col-md-6 mt-md-0 mt-3">
 
 
-                                <h5 class="text-uppercase">RMIT University</h5>
+                                <h5 class="text-uppercase"><strong>RMIT University</strong></h5>
                                 <p>RMIT University (Royal Melbourne Institute of Technology) is originially an Australian public research university in Melbourne, Victoria. </p>
 
                             </div>
@@ -28,20 +28,20 @@ export default class Footer extends React.Component {
                             <div class="col-md-3 mb-md-0 mb-3">
 
 
-                                <h5 class="text-uppercase">Study at RMIT</h5>
+                                <h5 class="text-uppercase h5-edit">Study at RMIT</h5>
 
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a href="#!">Link 1</a>
+                                        <a class="ftlink" href="#!">Study areas</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link 2</a>
+                                        <a href="#!">Apply to RMIT</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link 3</a>
+                                        <a href="#!">International Students</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link 4</a>
+                                        <a href="#!">Important dates</a>
                                     </li>
                                 </ul>
 
@@ -51,20 +51,20 @@ export default class Footer extends React.Component {
 
                             <div class="col-md-3 mb-md-0 mb-3">
 
-                                <h5 class="text-uppercase">STUDENT LIFE</h5>
+                                <h5 class="text-uppercase h5-edit">STUDENT LIFE</h5>
 
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a href="#!">Link 1</a>
+                                        <a href="#!">Life on campus</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link 2</a>
+                                        <a href="#!">Support services</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link 3</a>
+                                        <a href="#!">Life and work opportunities</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link 4</a>
+                                        <a href="#!">Sports and social clubs</a>
                                     </li>
                                 </ul>
 
