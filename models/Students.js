@@ -83,7 +83,7 @@ router.post('/', verifyToken,upload.single('Student_Photo') , function(req,res){
         id: req.body.id,
         name: req.body.name,
         year: req.body.year,
-        Student_Photo: path.replace(req.file.filename, '256x256-' + req.file.filename)
+        Student_Photo: path.replace(req.file.filename, '256x256-' + req.file.filename) // trung` field nay nha a
     }, function(err, student){
         res.send(student)
     })
