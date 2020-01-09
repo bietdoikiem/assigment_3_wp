@@ -14,8 +14,9 @@ export default class Courses extends React.Component{
             name: '',
             Course_Photo:'',
             description: '',
-            grid_view:false
- 
+            grid_view:false,
+            isAuthenticated: 0,
+            token: '',
         }
     }
     fetchData(){
@@ -24,10 +25,13 @@ export default class Courses extends React.Component{
             .then(res=>res.json())
             .then(json=>this.setState({courses: json}))
     }    
-    componentWillMount(){
+    componentDidMount(){
         this.fetchData()
     }
- 
+    componentWillMount(){
+        this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')}, () => console.log(this.state.isAuthenticated))
+        this.setState({token: window.sessionStorage.getItem('token')})
+    }
     handleChange(e){
         e.preventDefault();
         var obj = {}
@@ -49,7 +53,7 @@ export default class Courses extends React.Component{
         this.setState({ modalIsOpen: false});
         var method = 'POST'
         var formData = new FormData();
-        var photo = document.querySelector('input[type="file"]');
+        var photo = document.querySelector('#addcourse');
         formData.append('id', this.state.id);
         formData.append('name', this.state.name);
         formData.append('Course_Photo', photo.files[0]);
@@ -58,12 +62,13 @@ export default class Courses extends React.Component{
         url : url,
         method : 'POST',
         headers : {
+            "Authorization" : `Bearer ${this.state.token}`,
             "Content-Type" : "multipart/form-data"
         },
         data : formData
     })
     .then(() => {
-        alert('create student successfully')
+        alert('create course successfully')
         setTimeout(this.fetchData(), 10000)
 
     })
@@ -79,7 +84,7 @@ export default class Courses extends React.Component{
         this.setState({ modalIsOpen: false});
         var method = 'PUT'
         var formData = new FormData();
-        var photo = document.querySelector('input[type="file"]');
+        var photo = document.querySelector('#updatecourse');
         formData.append('name', this.state.name);
         formData.append('Course_Photo', photo.files[0]);
         formData.append('description',this.state.description );
@@ -87,12 +92,13 @@ export default class Courses extends React.Component{
         url : url,
         method : 'PUT',
         headers : {
+            "Authorization" : `Bearer ${this.state.token}`,
             "Content-Type" : "multipart/form-data"
         },
         data : formData
     })
     .then(() => {
-        alert('create student successfully')
+        alert('update course successfully')
         setTimeout(this.fetchData(), 10000)
 
     })
@@ -107,6 +113,9 @@ export default class Courses extends React.Component{
         if(window.confirm('Are you sure you want to delete this courses '))
         {
             fetch(url + "/"+id, {
+                headers: {
+                    "Authorization" : `Bearer ${this.state.token}`
+                },
                 method: 'delete',
             }).then(res=>res.json())
             .then(() => {
@@ -132,7 +141,7 @@ export default class Courses extends React.Component{
                             <button class="btn active" onClick={this.grid_view.bind(this)} ><i class="fa fa-th-large"></i> Grid</button>
                             <br/>
                             <br/>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_course_modal" ><i class="fas fa-plus"></i> Add courses</button>
+                            {this.state.isAuthenticated == 1 && <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_course_modal" ><i class="fas fa-plus"></i> Add courses</button>}
                         </div>
                         
                 <div className='grid-container'>
@@ -172,9 +181,9 @@ export default class Courses extends React.Component{
                                 <h6 className="card-subtitle mb-2 text-muted">{s.id}</h6>
                                 <h5 class="card-title">{s.description}</h5>
                                 <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>
+                                {this.state.isAuthenticated == 1 && <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>}
                                 <div className ='divider' />
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id,s.name,s.description)}>Update Courses</button>
+                                {this.state.isAuthenticated == 1 &&<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id,s.name,s.description)}>Update Courses</button>}
                             </div>
                             </div>
                             : null
@@ -203,7 +212,7 @@ export default class Courses extends React.Component{
                                             <input type="Text" class="form-control" name='description' id="CourseDe" placeholder='' 
                                             value={this.state.description} onChange={this.handleChange.bind(this)} />
                                         </div>
-                                        <input className="form-control-file form-control-sm" type="file" onChange={this.handleImageChange.bind(this)}></input> <img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> <br />
+                                        <input className="form-control-file form-control-sm" type="file" id="updatecourse" onChange={this.handleImageChange.bind(this)}></input> {this.state.Course_Photo ?<img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> : ''}
                                     </div>
                                     <div className ='modal-footer'>
                                         <button type="submit" className="btn btn-secondary" data-dismiss="modal" >Close</button>
@@ -232,7 +241,7 @@ export default class Courses extends React.Component{
                                             <input type="Text" class="form-control" name='name' id="Coursename" placeholder="Type your coursename" 
                                             value={this.state.name} onChange={this.handleChange.bind(this)} />
                                         </div>
-                                        <input className="form-control-file form-control-sm" type="file" onChange={this.handleImageChange.bind(this)}></input> <img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> <br />
+                                        <input className="form-control-file form-control-sm" type="file" id="addcourse" onChange={this.handleImageChange.bind(this)}></input> {this.state.Course_Photo ?<img height="200" width="200" src={this.state.Course_Photo} alt="Image preview..." /> : '' }
                                     </div>
                                     <div class ='modal-footer'>
                                         <button type="submit" class="btn btn-secondary" data-dismiss="modal" >Close</button>

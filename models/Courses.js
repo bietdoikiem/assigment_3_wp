@@ -107,7 +107,7 @@ router.delete('/:id', verifyToken, function(req, res){
     Course.findOne({id: req.params.id.toUpperCase()}, function(err, course){
         if(err){ handleError(err)}
         else if(course.Course_Photo){
-            if(typeof course.Course_Photo !== 'undefined' && course.Course_Photo !== '' && course.Course_Photo.indexOf("/uploads/projects/default_course") === -1){
+            if(typeof course.Course_Photo !== 'undefined' && course.Course_Photo !== '' && course.Course_Photo.indexOf("/uploads/courses/default_course") === -1){
                 fs.unlinkSync('.'+course.Course_Photo);
             }
         }
