@@ -262,7 +262,7 @@ export default class ProjectDetail extends React.Component {
                             </Carousel>
                             <h3 class="mt-1" style={{color: "#252525"}}>Project Videos</h3> 
                             {this.state.isAuthenticated == 1 &&
-                            <Button variant="primary mt-2" onClick={this.openVideoModal}>Add video  <i class="fas fa-plus fa-xs"></i> <i class="fa fa-video-camera" aria-hidden="true"></i></Button>}
+                            <Button variant="primary mt-2" onClick={this.openVideoModal}>Add videos  <i class="fas fa-plus fa-xs"></i> <i class="fa fa-video-camera" aria-hidden="true"></i></Button>}
                             {this.state.project.Video ? this.state.project.Video.map(url=>
                                 <div class="showVideo mt-2">
                                     <video src={`http://13.59.166.121:5000${url}`} width="510" height="286" preload="metadata" controls />
@@ -275,7 +275,7 @@ export default class ProjectDetail extends React.Component {
                             {this.state.isAuthenticated == 1 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3><Button variant="primary ml-3 mb-2" onClick={this.openUpdateModal}>Edit <i class="fas fa-edit"></i></Button><Button variant="danger ml-2 mb-2" onClick={this.delete.bind(this)}>Delete <i class="far fa-trash-alt"></i></Button></div>}
                             {this.state.isAuthenticated == 0 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3></div>}
                                 <div>
-                                    {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} - {this.state.project.student.year} - {this.state.project.course.id} </small> : '' }
+                                    {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} ({this.state.project.student.year}) - {this.state.project.course.id} ({this.state.project.semester}) </small> : '' }
                                 </div>
                             </div>
                             <div class="card mt-2" style={{height: "90%"}}>

@@ -162,7 +162,7 @@ export default class Students extends React.Component {
                     {this.state.isAuthenticated == 1 && <button type="button" className="btn btn-primary btn-primary-edit" data-toggle="modal" data-target="#add_student_modal" ><i className="fas fa-plus"></i> Add students</button>}
                     <form class="form-inline md-form form-sm active-cyan active-cyan-2 mt-3">
                     <i class="fas fa-search" aria-hidden="true"></i>
-                    <input class="form-control form-control-sm ml-3" type="text" name="keyword" value={this.state.keyword} placeholder="Enter course name"
+                    <input class="form-control form-control-sm ml-3" type="text" name="keyword" value={this.state.keyword} placeholder="Enter student's name"
                         aria-label="Search" onChange={this.handleChange.bind(this)} />
                     <i class="fa fa-list-alt ml-3" aria-hidden="true"></i>
                     <div class='divider' />
