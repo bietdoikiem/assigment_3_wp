@@ -2,8 +2,9 @@
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
-var fs = require('fs')
-var sharp = require('sharp')
+var fs = require('fs');
+var sharp = require('sharp');
+var jwt = require('jsonwebtoken');
 
 var storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -151,7 +152,9 @@ router.get('/all/filter', function (req, res) {
 
 
 
-router.post('/', upload.single('Thumbnail'), function(req,res){
+router.post('/', verifyToken, upload.single('Thumbnail'), function(req,res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     if (req.file){
     var path = "/" + req.file.path.split("\\").join("/")
     console.log(path)
@@ -246,10 +249,16 @@ router.post('/', upload.single('Thumbnail'), function(req,res){
         })
 
     }
+    } else{
+        res.json({'result': 'not allowed'})
+    }
+    })
 })
 
 // PUT method for project details:
-router.put('/:id', function(req, res){
+router.put('/:id', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     if(req.body.studentId){
     Student.find({id: req.body.studentId}, "-_id", function(err, student){
         if (err){
@@ -291,11 +300,17 @@ router.put('/:id', function(req, res){
         }
     })
     }
+    }else{
+        res.json({'result': 'not allowed'})
+    }
+    })
  }) 
 
 
 // Put images to slideshow
-router.put('/:id/photos', upload.array('Photo'), function(req, res){
+router.put('/:id/photos', verifyToken, upload.array('Photo'), function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(!err){
     console.log(req.files)
     if(req.files){
         Project.findOne({id: req.params.id}, function(err, project){
@@ -319,11 +334,16 @@ router.put('/:id/photos', upload.array('Photo'), function(req, res){
         res.send(result);
     })
     }
+    }else{
+        res.json({'result': 'not allowed'})
+    }
+    })
 })
 
 // Put videos to showcases
-router.put('/:id/videos', upload.array('Video'), function(req, res){
-    console.log(req.files)
+router.put('/:id/videos', verifyToken, upload.array('Video'), function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     if(req.files){
         Project.findOne({id: req.params.id}, function(err, project){
             if(err){ 
@@ -345,9 +365,15 @@ router.put('/:id/videos', upload.array('Video'), function(req, res){
         res.send(result);
     })
     }
+    }else{
+        res.json({'result': 'not allowed'})
+    }
+    })
 })
 
-router.delete('/:id', function(req, res){
+router.delete('/:id', verifyToken,function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
     Project.findOne({id: req.params.id}, function(err, project){
         if(err){ 
             handleError(err)
@@ -368,6 +394,10 @@ router.delete('/:id', function(req, res){
     Project.deleteOne({id: req.params.id}, function(err, result){
         if (err) handleError(err)
         res.send(result)
+    })
+    }else{
+        res.json({'result': 'not allowed'})
+    }
     })
 })
 
@@ -401,6 +431,24 @@ function handleID(res){
     last_item += 1;
     last_item = last_item.toString(10);
     return last_item
+    }
+}
+function verifyToken(req, res, next){
+    //Get auth header value
+    const bearerHeader = req.headers['authorization'];
+    // Check if bearer is undefined
+    if(typeof bearerHeader !== 'undefined'){
+        // Split at the space
+        const bearer = bearerHeader.split(' ');
+        // Get token from array
+        const bearerToken = bearer[1]
+        // Set the token
+        req.token = bearerToken
+        // Next middleware
+        next();
+    } else {
+        //forbidden
+        res.json({'result': 'not allowed'})
     }
 }
 

@@ -15,6 +15,7 @@ export default class Navbar extends React.Component {
         event.preventDefault();
         window.sessionStorage.setItem("isAuthenticated", 0);
         this.setState({isAuthenticated: window.sessionStorage.getItem('authenticated')})
+        sessionStorage.removeItem("token");
         window.location.reload()
     }
     render() {

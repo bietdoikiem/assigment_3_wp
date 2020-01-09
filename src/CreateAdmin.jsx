@@ -10,6 +10,8 @@ export default class CreateAdmin extends React.Component{
             username: '', 
             password: '',
             modalIsOpen: false,
+            isAuthenticated: 0,
+            token: '',
         }
         this.openModal=this.openModal.bind(this);
         this.closeModal=this.closeModal.bind(this)
@@ -33,6 +35,7 @@ export default class CreateAdmin extends React.Component{
         fetch('http://13.59.166.121:5000/admins/',{
             method: 'POST',
             headers: {
+                "Authorization" : `Bearer ${this.state.token}`,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
@@ -56,6 +59,10 @@ export default class CreateAdmin extends React.Component{
     }
     componentDidMount(){
         this.fetchAdmins();
+    }
+    componentWillMount(){
+        this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')}, () => console.log(this.state.isAuthenticated))
+        this.setState({token: window.sessionStorage.getItem('token')})
     }
 
     render(){

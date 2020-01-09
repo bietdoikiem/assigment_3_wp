@@ -35,6 +35,7 @@ export default class ProjectDetail extends React.Component {
             modalIsOpenVideo: false,
             modalIsOpenUpdate: false,
             isAuthenticated: 0,
+            token: '',
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -135,6 +136,7 @@ export default class ProjectDetail extends React.Component {
         fetch(URL, {
             method: method,
             headers: {
+                "Authorization" : `Bearer ${this.state.token}`,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
@@ -170,20 +172,21 @@ export default class ProjectDetail extends React.Component {
         url : URL,
         method : method,
         headers : {
+            "Authorization" : `Bearer ${this.state.token}`,
             "Content-Type" : "multipart/form-data"
         },
         data : formData
     })
     .then(() => {
-        setTimeout(this.fetchProject(), 10000)
-
+        alert('Uploaded image successfully')
+        setTimeout(this.fetchProject(), 5000)
+        window.location.reload(false);
     })
     .catch(error => {
         if (error.response) {
             console.log(error.responderEnd);
         }
     });
-    window.location.reload(false); 
     }
     saveVideo(event){
         var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}/videos`
@@ -199,11 +202,13 @@ export default class ProjectDetail extends React.Component {
         url : URL,
         method : method,
         headers : {
+            "Authorization" : `Bearer ${this.state.token}`,
             "Content-Type" : "multipart/form-data"
         },
         data : formData
     })
     .then(() => {
+        alert('Uploaded Video succesfully')
         setTimeout(this.fetchProject(), 10000)
     })
     .catch(error => {
@@ -216,6 +221,9 @@ export default class ProjectDetail extends React.Component {
         var URL = `http://13.59.166.121:5000/projects/${this.props.match.params.id}`
         if(window.confirm('Do you want to delete?')){
             fetch(URL, {
+                headers: {
+                    "Authorization" : `Bearer ${this.state.token}`,
+                }, 
                 method: 'delete'
             }) .then(res=>res.json())
             .then(alert("Project deleted successfully"))
@@ -228,7 +236,8 @@ export default class ProjectDetail extends React.Component {
         this.fetchCourses();
     }
     componentWillMount(){
-        this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')}, () => console.log(this.state.isAuthenticated))      
+        this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')})  
+        this.setState({token: window.sessionStorage.getItem('token')})      
     }
 
 
@@ -266,7 +275,7 @@ export default class ProjectDetail extends React.Component {
                             {this.state.isAuthenticated == 1 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3><Button variant="primary ml-3 mb-2" onClick={this.openUpdateModal}>Edit <i class="fas fa-edit"></i></Button><Button variant="danger ml-2 mb-2" onClick={this.delete.bind(this)}>Delete <i class="far fa-trash-alt"></i></Button></div>}
                             {this.state.isAuthenticated == 0 && <div><h3 class="d-inline" style={{color: "#252525"}}>{this.state.project.name}</h3></div>}
                                 <div>
-                                    {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} - {this.state.project.student.year} </small> : '' }
+                                    {this.state.project.student ? <small style={{color: "#999999"}}>by {this.state.project.student.name} - {this.state.project.student.id} - {this.state.project.student.year} - {this.state.project.course.id} </small> : '' }
                                 </div>
                             </div>
                             <div class="card mt-2" style={{height: "90%"}}>

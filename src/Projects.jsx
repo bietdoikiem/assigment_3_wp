@@ -41,6 +41,7 @@ export default class Projects extends React.Component{
             keyword: '',
             category: '',
             isAuthenticated: 0,
+            token: '',
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -111,7 +112,7 @@ export default class Projects extends React.Component{
     }
     componentWillMount(){
         this.setState({isAuthenticated: window.sessionStorage.getItem('isAuthenticated')}, () => console.log(this.state.isAuthenticated))
-        
+        this.setState({token: window.sessionStorage.getItem('token')})
     }
 
 
@@ -140,7 +141,8 @@ export default class Projects extends React.Component{
         url : URL,
         method : 'POST',
         headers : {
-            "Content-Type" : "multipart/form-data"
+            "Content-Type" : "multipart/form-data",
+            "Authorization" : `Bearer ${this.state.token}`
         },
         data : formData
     })
@@ -281,7 +283,7 @@ export default class Projects extends React.Component{
                                 Scope: <input class="form-control form-control-sm" type="text" name="scope" placeholder="Enter scopes" value={this.state.scope} onChange={this.handleChange.bind(this)} ></input><br />
                                 Industry (optional): <input class="form-control form-control-sm" type="text" name="industry" placeholder="Enter industry" value={this.state.industry} onChange={this.handleChange.bind(this)} ></input><br />
                                 Application (optional): <input class="form-control form-control-sm" type="text" name="application" placeholder="What is it application ?" value={this.state.application} onChange={this.handleChange.bind(this)} ></input><br />
-                                Thumbnail Image:<span style={{color: "red"}}>*</span> <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br /> 
+                                Thumbnail Image:<span style={{color: "red"}}>*</span> <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> {this.state.thumbnail ? <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> : ''}
                                 Project's Description: <textarea class="form-control" rows="4" cols="50" name="description" placeholder="Anything to describe your work" value={this.state.description} onChange={this.handleChange.bind(this)} />
                             </div>
                         </form>
