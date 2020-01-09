@@ -36,15 +36,18 @@ export default class Projects extends React.Component{
             Photo: [],
             thumbnail: null,
             modalIsOpen: false,
+            modalIsOpenThumbnail: false,
             pageNo: 1,
             size: 4,
             keyword: '',
             category: '',
             isAuthenticated: 0,
             token: '',
+            id: '',
         }
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.closeThumbnailModal = this.closeThumbnailModal.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this)
     }
     openModal() {
@@ -52,6 +55,12 @@ export default class Projects extends React.Component{
     }
     closeModal() {
         this.setState({ modalIsOpen: false, thumbnail: null });  
+    }
+    openThumbnailModal(id) {
+        this.setState({ modalIsOpenThumbnail: true, id: id }, () => console.log(`This is ${this.state.id}`));
+    }
+    closeThumbnailModal() {
+        this.setState({ modalIsOpenThumbnail: false, thumbnail: null, id: '' });  
     }
     handleChange(e){
         var obj = {}
@@ -121,7 +130,7 @@ export default class Projects extends React.Component{
         this.setState({ modalIsOpen: false});
         var method = 'POST'
         var formData = new FormData();
-        var photo = document.querySelector('input[type="file"]');
+        var photo = document.querySelector('#thumbnailAdd');
         formData.append('name', this.state.name);
         formData.append('studentId', this.state.student.id);
         formData.append('courseId', this.state.course.id);
@@ -178,6 +187,32 @@ export default class Projects extends React.Component{
             return this.props.history.push(`/search?k=${this.state.keyword}&cId=${this.state.category}`)
         }
     }
+    saveThumbnail(){
+        var URL = `http://13.59.166.121:5000/projects/${this.state.id}/thumbnail`
+        this.setState({ modalIsOpenThumbnail: false});
+        var method = 'PUT'
+        var formData = new FormData();
+        var thumbnail = document.querySelector('#thumbnailUpload');
+        formData.append('Thumbnail', thumbnail.files[0]);
+       axios({
+        url : URL,
+        method : method,
+        headers : {
+            "Authorization" : `Bearer ${this.state.token}`,
+            "Content-Type" : "multipart/form-data"
+        },
+        data : formData
+    })
+    .then(() => {
+        alert('Uploaded Thumbnail succesfully')
+        setTimeout(this.fetchProjects(), 10000)
+    })
+    .catch(error => {
+        if (error.response) {
+            console.log(error.responderEnd);
+        }
+    });
+    }
 
     render(){
         return(
@@ -218,7 +253,8 @@ export default class Projects extends React.Component{
                                     >
                                         {p.description}
                                     </ReadMoreAndLess>
-                                    <Link to={`/projects/${p.id}`}><Button variant="danger mt-2">View Project &nbsp; <i class="fas fa-search"></i></Button></Link>
+                                    <Link to={`/projects/${p.id}`}><Button variant="danger mt-2 d-inline">View Project &nbsp; <i class="fas fa-search"></i></Button></Link> 
+                                    <Button variant="primary mt-2 ml-2" onClick={this.openThumbnailModal.bind(this, p.id)}>Change Thumbnail &nbsp; <i class="far fa-image"></i></Button>
                                 </div>
                             </div>
                         </div><br/>
@@ -240,7 +276,8 @@ export default class Projects extends React.Component{
                         </li>
                     </ul>
                 </nav>
-                {/* Modal Part*/}    
+                {/* Modal Part*/}  
+                {/* Add Project Modal */}  
                 <Modal size="lg" show={this.state.modalIsOpen} onHide={this.closeModal}>
                     <Modal.Header closeButton>
                         <Modal.Title><span style={{color: "#007bff"}}>Add a project</span></Modal.Title>
@@ -283,7 +320,7 @@ export default class Projects extends React.Component{
                                 Scope: <input class="form-control form-control-sm" type="text" name="scope" placeholder="Enter scopes" value={this.state.scope} onChange={this.handleChange.bind(this)} ></input><br />
                                 Industry (optional): <input class="form-control form-control-sm" type="text" name="industry" placeholder="Enter industry" value={this.state.industry} onChange={this.handleChange.bind(this)} ></input><br />
                                 Application (optional): <input class="form-control form-control-sm" type="text" name="application" placeholder="What is it application ?" value={this.state.application} onChange={this.handleChange.bind(this)} ></input><br />
-                                Thumbnail Image:<span style={{color: "red"}}>*</span> <input class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> {this.state.thumbnail ? <img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> : ''}
+                                Thumbnail Image:<span style={{color: "red"}}>*</span> <input id="thumbnailAdd" class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> {this.state.thumbnail ? <><img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br/> </>: ''}
                                 Project's Description: <textarea class="form-control" rows="4" cols="50" name="description" placeholder="Anything to describe your work" value={this.state.description} onChange={this.handleChange.bind(this)} />
                             </div>
                         </form>
@@ -295,6 +332,27 @@ export default class Projects extends React.Component{
                         <Button type="submit" variant="danger" onClick={this.save.bind(this)}>
                             Add project
                         </Button>
+                    </Modal.Footer>
+                {/* Change Thumbnail Modal*/}
+                </Modal>
+                <Modal size="lg" show={this.state.modalIsOpenThumbnail} onHide={this.closeThumbnailModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title><span style={{ color: "#007bff" }}>Change thumbnail</span></Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <form class="form" encType="multipart/form-data">
+                            <div class="form-group">
+                                Thumbnail Image:<span style={{color: "red"}}>*</span> <input id= "thumbnailUpload" class="form-control-file form-control-sm" type="file" onChange={this.handleImageChange}></input> {this.state.thumbnail ? <><img height="200" width="200" src={this.state.thumbnail} alt="Image preview..." /> <br/> </>: ''}
+                            </div>
+                        </form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.closeThumbnailModal}>
+                            Close
+                            </Button>
+                        <Button type="submit" variant="danger" onClick={this.saveThumbnail.bind(this)}>
+                            Change
+                            </Button>
                     </Modal.Footer>
                 </Modal>
             </div>

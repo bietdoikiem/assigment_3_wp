@@ -179,8 +179,7 @@ export default class Courses extends React.Component{
                             <img src={'http://13.59.166.121:5000'+s.Course_Photo} class="rounded float-left"/>
                                 <h5 className="card-title">{s.name}</h5>
                                 <h6 className="card-subtitle mb-2 text-muted">{s.id}</h6>
-                                <h5 class="card-title">{s.description}</h5>
-                                <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                <p className="card-text">{s.description}</p>
                                 {this.state.isAuthenticated == 1 && <button type='button' class='btn btn-danger' onClick={this.delete.bind(this,s.id)} >Delete</button>}
                                 <div className ='divider' />
                                 {this.state.isAuthenticated == 1 &&<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#update_course_modal" onClick={this.edit.bind(this,s.id,s.name,s.description)}>Update Courses</button>}

@@ -371,6 +371,47 @@ router.put('/:id/videos', verifyToken, upload.array('Video'), function(req, res)
     })
 })
 
+router.put('/:id/thumbnail', verifyToken, upload.single('Thumbnail'), function(req, res){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    if(!err){
+    if(req.file){
+        Project.findOne({id: req.params.id}, function(err, project){
+            if(err){ 
+                handleError(err)
+            }else{
+                fs.unlinkSync('.'+project.Thumbnail);
+            }
+    if(project.Photo[0].indexOf("/uploads/projects/Thumbnail") > -1){
+    var path = "/" + req.file.path.split("\\").join("/")
+    var array = []
+    array.push(path)
+    var paths = array.map(p => {return p})
+    console.log(path)
+    Project.findOneAndUpdate({id: req.params.id},{
+        Thumbnail: path,
+        Photo: paths
+    }, function(err, result){
+        if(err) handleError(err)
+        res.send(result);
+    })
+    } else {
+        var path = "/" + req.file.path.split("\\").join("/")
+        console.log(path)
+        Project.findOneAndUpdate({id: req.params.id},{
+            Thumbnail: path
+        }, function(err, result){
+            if(err) handleError(err)
+            res.send(result);
+        })
+    }
+    })
+    }
+    }else{
+        res.json({'result': 'not allowed'})
+    }
+    })
+})
+
 router.delete('/:id', verifyToken,function(req, res){
     jwt.verify(req.token, 'secretkey', (err, authData) => {
     if(!err){
