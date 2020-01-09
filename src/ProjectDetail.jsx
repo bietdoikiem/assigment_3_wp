@@ -285,10 +285,13 @@ export default class ProjectDetail extends React.Component {
                                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" style={{color: "#252525"}}>Description</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false" style={{color: "#252525"}}>Assignment</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" style={{color: "#252525"}}>Scopes</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false" style={{color: "#252525"}}>Assignment</a>
+                                        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="true" style={{color: "#252525"}}>Other</a>
                                     </li>
                                 </ul>
                             </div>
@@ -309,10 +312,19 @@ export default class ProjectDetail extends React.Component {
                                     </div>
                                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">{this.state.project.scope}</div>
                                     {this.state.project.assignment ? <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                        <li>Name: {this.state.project.assignment.name}</li>
-                                        <li>Description: {this.state.project.assignment.description}</li>
-                                        <li>Percentage: {this.state.project.assignment.percentage}</li>
+                                        <li><b>Name</b>: {this.state.project.assignment.name}</li>
+                                        <hr/>
+                                        <li><b>Description</b>: {this.state.project.assignment.description}</li>
+                                        <hr/>
+                                        <li><b>Percentage</b>: {this.state.project.assignment.percentage}</li>
                                     </div> : '' }
+                                    {this.state.project.technology ? <><div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
+                                        <li><b>Technology</b>: {this.state.project.technology}</li>
+                                        <hr/>
+                                        <li><b>Industry</b>: {this.state.project.industry}</li>
+                                        <hr/>
+                                        <li><b>Application</b>: {this.state.project.application}</li>
+                                    </div></> : ''}
                                 </div>
                             </div>
                         </div>

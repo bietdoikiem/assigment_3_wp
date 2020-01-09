@@ -253,7 +253,7 @@ export default class Projects extends React.Component{
                                     >
                                         {p.description}
                                     </ReadMoreAndLess>
-                                    <Link to={`/projects/${p.id}`}><Button variant="danger mt-2 d-inline">View Project &nbsp; <i class="fas fa-search"></i></Button></Link> 
+                                    <Link to={`/projects/${p.id}`}><Button variant="danger mt-2">View Project &nbsp; <i class="fas fa-search"></i></Button></Link> 
                                     <Button variant="primary mt-2 ml-2" onClick={this.openThumbnailModal.bind(this, p.id)}>Change Thumbnail &nbsp; <i class="far fa-image"></i></Button>
                                 </div>
                             </div>
@@ -349,7 +349,7 @@ export default class Projects extends React.Component{
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.closeThumbnailModal}>
                             Close
-                            </Button>
+                        </Button>
                         <Button type="submit" variant="danger" onClick={this.saveThumbnail.bind(this)}>
                             Change
                             </Button>
